@@ -8,7 +8,7 @@ public class ScrewController : MonoBehaviour
     public float moveSpeed = 5.0f;
     public LayerMask obstacleLayer;
     public CubeController cube;
-    public Vector3 extractionLocalAxis = Vector3.up;
+    public Vector3 extractionLocalAxis;
 
     void Start()
     {
