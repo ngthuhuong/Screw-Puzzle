@@ -39,7 +39,6 @@ public class CubeController : MonoBehaviour
         Debug.Log(gameObject.name + ": Tất cả vít đã tháo! Bắt đầu rơi tự do.");
         rb.isKinematic = false; 
         
-        // Tùy chọn: Sau khi rơi ra khỏi tầm nhìn, hủy đối tượng
-        // Destroy(gameObject, 5f); 
+         Destroy(gameObject, 5f); 
     }
 }

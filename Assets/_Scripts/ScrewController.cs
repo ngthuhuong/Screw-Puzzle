@@ -1,17 +1,18 @@
 using UnityEngine;
-using System.Collections; // Cần thiết để dùng Coroutine
+using System.Collections;
 
 public class ScrewController : MonoBehaviour
 {
-    private Vector3 initialPosition;
-    public float moveDistance = 0.5f;     // Khoảng cách tối đa vít sẽ di chuyển
-    public float moveSpeed = 5.0f;      
+    private Vector3 initialLocalPosition;
+    public float moveDistance = 0.5f;
+    public float moveSpeed = 5.0f;
     public LayerMask obstacleLayer;
     public CubeController cube;
+    public Vector3 extractionLocalAxis = Vector3.up;
 
     void Start()
     {
-        initialPosition = transform.position;
+        initialLocalPosition = transform.localPosition;
     }
 
     private void OnMouseDown()
@@ -22,41 +23,45 @@ public class ScrewController : MonoBehaviour
     IEnumerator AttemptMove()
     {
         Vector3 currentPosition = transform.position;
-        Vector3 targetPosition = initialPosition + Vector3.up * moveDistance;
-        float startTime = Time.time;
-        float journeyLength = moveDistance;
+        Vector3 extractionWorldDirection = transform.TransformDirection(extractionLocalAxis).normalized;
         
+        Vector3 targetLocalPosition = initialLocalPosition + extractionLocalAxis * moveDistance;
+        Vector3 targetWorldPosition = transform.parent.TransformPoint(targetLocalPosition);
+
+        float checkRayDistance = Vector3.Distance(currentPosition, targetWorldPosition);
+
         RaycastHit hit;
-        if (Physics.Raycast(currentPosition, Vector3.up, out hit, moveDistance, obstacleLayer))
+        if (Physics.Raycast(currentPosition, extractionWorldDirection, out hit, checkRayDistance, obstacleLayer))
         {
             Debug.Log("Cannot move fully. Blocked by: " + hit.collider.gameObject.name);
-            // Có thể thêm rung lắc nhỏ ở đây
-            
-            transform.position = initialPosition;
-            yield break;  
+            transform.localPosition = initialLocalPosition;
+            yield break;
         }
-        
+
         Debug.Log("Moving up. No obstacles detected.");
-        
-        while (Vector3.Distance(transform.position, targetPosition) > 0.001f)
+
+        float startTime = Time.time;
+        float journeyLength = checkRayDistance;
+        Vector3 startPos = currentPosition;
+
+        while (Vector3.Distance(transform.position, targetWorldPosition) > 0.001f)
         {
             float distCovered = (Time.time - startTime) * moveSpeed;
             float fractionOfJourney = distCovered / journeyLength;
-            
-            transform.position = Vector3.Lerp(currentPosition, targetPosition, fractionOfJourney);
-            if (cube != null)
-            {
-                cube.ScrewRemoved(this);
-            }
+
+            transform.position = Vector3.Lerp(startPos, targetWorldPosition, fractionOfJourney);
+
             yield return null;
         }
 
-        transform.position = targetPosition;  
+        transform.localPosition = targetLocalPosition;
         Debug.Log("Screw successfully removed!");
-        
-        // Kích hoạt logic tháo tấm gỗ ở đây (gọi PlankController)
-        
-        // Tùy chọn: Hủy đối tượng vít sau khi tháo
-        // Destroy(gameObject, 0.5f);
+
+        if (cube != null)
+        {
+            cube.ScrewRemoved(this);
+        }
+
+        Destroy(gameObject, 0.5f);
     }
 }
