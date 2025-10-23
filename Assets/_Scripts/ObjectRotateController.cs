@@ -1,18 +1,19 @@
 using UnityEngine;
 
+using UnityEngine;
+
 public class ObjectRotateController : MonoBehaviour
 {
     public Transform target;          // Vật thể sẽ xoay
     public Camera mainCamera;         // Camera nhìn vật thể
     public float rotationSpeed = 3f;  // Tốc độ xoay
     public float zoomSpeed = 0.5f;    // Tốc độ zoom
-    public float minZoom = 2f;        // Giới hạn gần nhất
-    public float maxZoom = 10f;       // Giới hạn xa nhất
+    public float minZoom = 5f;        // Giới hạn gần nhất
+    public float maxZoom = 15f;       // Giới hạn xa nhất
 
     private float yaw;
     private float pitch;
     private float currentDistance;
-
     void Start()
     {
         if (target == null || mainCamera == null)
@@ -22,8 +23,19 @@ public class ObjectRotateController : MonoBehaviour
             return;
         }
 
-        // Tính khoảng cách ban đầu giữa camera và vật thể
-        currentDistance = Vector3.Distance(mainCamera.transform.position, target.position);
+        // BƯỚC SỬA ĐỔI: Đặt khoảng cách ban đầu ở giữa min và max zoom
+        currentDistance = (minZoom + maxZoom) / 2f; 
+        
+        // Đặt vị trí camera ngay lập tức
+        Vector3 initialDirection = (mainCamera.transform.position - target.position).normalized;
+        mainCamera.transform.position = target.position + initialDirection * currentDistance;
+
+        // Khởi tạo góc xoay ban đầu của vật thể
+        yaw = target.eulerAngles.y;
+        pitch = target.eulerAngles.x;
+
+        // Đảm bảo camera nhìn vào mục tiêu (nếu cần)
+        mainCamera.transform.LookAt(target.position);
     }
 
     void Update()
