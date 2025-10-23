@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: ScrewColor
+  m_EditorClassIdentifier: Assembly-CSharp::ScrewColorPresets
+  colors:
+  - color: 0
+    material: {fileID: 2100000, guid: 10836081ca54b7345a3e0445b12abd9f, type: 2}
+  - color: 5
+    material: {fileID: 2100000, guid: 1272abe13f68d23429ad4182a8e1f9ad, type: 2}
+  - color: 2
+    material: {fileID: 2100000, guid: 2efebf8dae789704caebad96452029c2, type: 2}
+  - color: 3
+    material: {fileID: 2100000, guid: 79bf83f65f6998b48b173998d1ca8159, type: 2}
+  - color: 4
+    material: {fileID: 2100000, guid: 198d1f5cb1d28f54f90226791b14fde4, type: 2}
+  - color: 1
+    material: {fileID: 2100000, guid: a091476de8d58ee47a64953d73089d7a, type: 2}

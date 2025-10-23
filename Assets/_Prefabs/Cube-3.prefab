@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2efebf8dae789704caebad96452029c2, type: 2}
+  - {fileID: 2100000, guid: 10836081ca54b7345a3e0445b12abd9f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -114,8 +114,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3324695873531690514}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: 0.53, y: 0, z: 0}
+  m_LocalRotation: {x: 0.49999997, y: -0.50000006, z: 0.50000006, w: 0.49999997}
+  m_LocalPosition: {x: -0.53, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -173,7 +173,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationPresets: {fileID: 11400000, guid: e9bd9699fe978e14ca51d9bf1324e8ac, type: 2}
+  colorPresets: {fileID: 11400000, guid: 05477f8e3aad3cd41875556edbd059fa, type: 2}
   presetName: 5
+  screwColor: 0
   screwTransform: {fileID: 5201447566762075442}
 --- !u!54 &3346412895673968359
 Rigidbody:
@@ -266,7 +268,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2efebf8dae789704caebad96452029c2, type: 2}
+  - {fileID: 2100000, guid: 10836081ca54b7345a3e0445b12abd9f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -375,7 +377,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationPresets: {fileID: 11400000, guid: e9bd9699fe978e14ca51d9bf1324e8ac, type: 2}
+  colorPresets: {fileID: 11400000, guid: 05477f8e3aad3cd41875556edbd059fa, type: 2}
   presetName: 4
+  screwColor: 0
   screwTransform: {fileID: 7309336580709486204}
 --- !u!54 &3019174784114388859
 Rigidbody:
@@ -412,6 +416,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2369158883949699329, guid: fb086a58ba4fea64a9caf937d9dc5258, type: 3}
+      propertyPath: colorPresets
+      value: 
+      objectReference: {fileID: 11400000, guid: 05477f8e3aad3cd41875556edbd059fa, type: 2}
     - target: {fileID: 4324386620174453162, guid: fb086a58ba4fea64a9caf937d9dc5258, type: 3}
       propertyPath: m_Name
       value: Cube-3
@@ -456,6 +464,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7195316991203050627, guid: fb086a58ba4fea64a9caf937d9dc5258, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 10836081ca54b7345a3e0445b12abd9f, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:

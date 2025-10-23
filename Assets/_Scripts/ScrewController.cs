@@ -10,7 +10,8 @@ public class ScrewController : MonoBehaviour
     public LayerMask obstacleLayer;
     public CubeController cube;
     
-   private Transform screwModelTransform;
+    
+    private Transform screwModelTransform;
    
     private const float BoxCastOffset = 0.05f;
     private const float OverlapCheckPadding = 0.001f;

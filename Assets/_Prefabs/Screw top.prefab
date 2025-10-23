@@ -87,8 +87,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationPresets: {fileID: 11400000, guid: e9bd9699fe978e14ca51d9bf1324e8ac, type: 2}
+  colorPresets: {fileID: 11400000, guid: 05477f8e3aad3cd41875556edbd059fa, type: 2}
   presetName: 0
   screwTransform: {fileID: 1601210645074483446}
+  screwColor: 0
 --- !u!54 &595431362112146871
 Rigidbody:
   m_ObjectHideFlags: 0
