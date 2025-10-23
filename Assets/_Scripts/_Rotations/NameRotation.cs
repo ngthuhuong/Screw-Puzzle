@@ -18,5 +18,4 @@ public struct NamedRotation
     public ScrewFace Name; // Ví dụ: "Top", "Right", "Front"
     public Vector3 RotationEuler; // Giá trị Euler (x, y, z)
     public Vector3 PositionOffset; // Giá trị Offset (x, y, z)
-    public Vector3 ExtractionLocalAxis;
 }

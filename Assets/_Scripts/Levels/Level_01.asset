@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f48f8642ac6445042abb9f79e6205601, type: 3}
+  m_Name: Level_01
+  m_EditorClassIdentifier: 
+  plankModules:
+  - {fileID: 4324386620174453162, guid: fb086a58ba4fea64a9caf937d9dc5258, type: 3}
+  - {fileID: 1714816368724138152, guid: 4410642c54aa6124397af24b06782c10, type: 3}
+  - {fileID: 1714816368724138152, guid: 7166103cf9f4a0e419d6f98093f0c71a, type: 3}
+  - {fileID: 1714816368724138152, guid: ffee8c2501658c6478126f27c3740949, type: 3}
+  levelLayers:
+  - rows:
+    - columns: 01000000000000000100000000000000
+    - columns: 02000000010000000300000001000000
+    - columns: 00000000010000000300000001000000
+  - rows:
+    - columns: 01000000000000000100000000000000
+    - columns: 02000000010000000300000001000000
+    - columns: 00000000010000000300000001000000

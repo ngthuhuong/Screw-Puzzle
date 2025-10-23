@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class CubeController : MonoBehaviour
 {
-    [SerializeField] private List<ScrewController> screws; // Danh sách các vít v
+    private List<ScrewController> activeScrews; // Danh sách các vít đang hoạt động
     private Rigidbody rb;
     
     void Start()
@@ -13,22 +13,23 @@ public class CubeController : MonoBehaviour
         {
             rb = gameObject.AddComponent<Rigidbody>();
         }
-        
         rb.isKinematic = true; 
+   
+        ScrewController[] childScrews = GetComponentsInChildren<ScrewController>();
+        activeScrews = new List<ScrewController>(childScrews);
+        
+        Debug.Log(gameObject.name + " được giữ bởi: " + activeScrews.Count + " vít.");
     }
 
-    // Hàm được gọi từ ScrewController khi một vít bị tháo ra
     public void ScrewRemoved(ScrewController removedScrew)
     {
-        // 1. Xóa vít khỏi danh sách
-        if (screws.Contains(removedScrew))
+        if (activeScrews.Contains(removedScrew))
         {
-            screws.Remove(removedScrew);
-            Debug.Log(gameObject.name + ": Vít đã tháo. Còn lại " + screws.Count + " vít.");
+            activeScrews.Remove(removedScrew);
+            Debug.Log(gameObject.name + ": Vít đã tháo. Còn lại " + activeScrews.Count + " vít.");
         }
         
-        // 2. Kiểm tra nếu tất cả vít đã tháo
-        if (screws.Count == 0)
+        if (activeScrews.Count == 0)
         {
             ReleasePlank();
         }
@@ -39,6 +40,8 @@ public class CubeController : MonoBehaviour
         Debug.Log(gameObject.name + ": Tất cả vít đã tháo! Bắt đầu rơi tự do.");
         rb.isKinematic = false; 
         
-         Destroy(gameObject, 5f); 
+        transform.SetParent(null);
+
+        Destroy(gameObject, 5f); 
     }
 }

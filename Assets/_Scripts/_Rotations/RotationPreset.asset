@@ -20,7 +20,7 @@ MonoBehaviour:
   - Name: 1
     RotationEuler: {x: 180, y: 0, z: 0}
     PositionOffset: {x: 0, y: -0.53, z: 0}
-    ExtractionLocalAxis: {x: 0, y: -1, z: 0}
+    ExtractionLocalAxis: {x: 0, y: 1, z: 0}
   - Name: 5
     RotationEuler: {x: 90, y: 90, z: 180}
     PositionOffset: {x: -0.53, y: 0, z: 0}

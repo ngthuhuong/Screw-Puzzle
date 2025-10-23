@@ -10,7 +10,6 @@ public class ScrewSetup : MonoBehaviour
     private ScrewController screwController;
     void Awake()
     {
-        screwController = GetComponent<ScrewController>();      
         if(screwTransform == null)
         {
             screwTransform = this.transform;
@@ -32,12 +31,7 @@ public class ScrewSetup : MonoBehaviour
             // 2. Áp dụng Position Offset
             screwTransform.localPosition = presetData.PositionOffset;
             
-            // 3. GÁN HƯỚNG THÁO CHO SCREW CONTROLLER
-            if (screwController != null)
-            {
-                // Gán trục cục bộ tiêu chuẩn cho ScrewController
-                screwController.extractionLocalAxis = presetData.ExtractionLocalAxis;
-            }
+           
         }
     }
 }
