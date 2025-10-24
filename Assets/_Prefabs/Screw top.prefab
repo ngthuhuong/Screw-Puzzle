@@ -89,8 +89,8 @@ MonoBehaviour:
   rotationPresets: {fileID: 11400000, guid: e9bd9699fe978e14ca51d9bf1324e8ac, type: 2}
   colorPresets: {fileID: 11400000, guid: 05477f8e3aad3cd41875556edbd059fa, type: 2}
   presetName: 0
-  screwTransform: {fileID: 1601210645074483446}
   screwColor: 0
+  screwTransform: {fileID: 1601210645074483446}
 --- !u!54 &595431362112146871
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -193,10 +193,40 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b81c32ad8a9acca4f8b1f1d04a3c53d2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5251580596793173643}
   m_SourcePrefab: {fileID: 100100000, guid: b81c32ad8a9acca4f8b1f1d04a3c53d2, type: 3}
 --- !u!4 &8327659781101879276 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b81c32ad8a9acca4f8b1f1d04a3c53d2, type: 3}
   m_PrefabInstance: {fileID: 8366407243320465415}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8708302372076660054 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b81c32ad8a9acca4f8b1f1d04a3c53d2, type: 3}
+  m_PrefabInstance: {fileID: 8366407243320465415}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &5251580596793173643
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8708302372076660054}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: aace08a8a0901464dad98ab689acb24e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

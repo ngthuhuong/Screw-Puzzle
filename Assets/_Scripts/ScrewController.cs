@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Linq;
+using MoreMountains.Tools;
 
 public class ScrewController : MonoBehaviour
 {
@@ -9,10 +10,10 @@ public class ScrewController : MonoBehaviour
     public float moveSpeed = 5.0f;
     public LayerMask obstacleLayer;
     public CubeController cube;
-    
-    
+
     private Transform screwModelTransform;
-   
+    private ScrewSetup screwSetup; // 🟢 Thêm để lấy màu từ đây
+
     private const float BoxCastOffset = 0.05f;
     private const float OverlapCheckPadding = 0.001f;
 
@@ -20,31 +21,27 @@ public class ScrewController : MonoBehaviour
 
     void Start()
     {
-        // 1. TỰ ĐỘNG TÌM KIẾM SCREW MODEL TRANSFORM
-        // Tìm ScrewSetup trên đối tượng con (Model) và lấy Transform của nó
-        ScrewSetup setupComponent = GetComponentInChildren<ScrewSetup>();
-        if (setupComponent != null)
+        // Tìm ScrewSetup trên đối tượng con
+        screwSetup = GetComponentInChildren<ScrewSetup>();
+        if (screwSetup == null)
         {
-             screwModelTransform = setupComponent.transform;
-             // Lấy cờ IsReversing từ ScrewSetup (nếu bạn vẫn cần nó)
-             // Bạn có thể giữ lại logic IsReversing trong ScrewController nếu nó là nơi cuối cùng quyết định hướng.
-        }
-
-        initialLocalPosition = transform.localPosition;
-        boxCollider = GetComponent<BoxCollider>();
-        
-        // KIỂM TRA AN TOÀN
-        if (boxCollider == null || screwModelTransform == null)
-        {
-            Debug.LogError("Thiếu BoxCollider hoặc ScrewModelTransform (kiểm tra lại cấu trúc Cha-Con và ScrewSetup).");
+            Debug.LogError("Không tìm thấy ScrewSetup trong con của ScrewController!");
             enabled = false;
             return;
         }
-        
-        if (boxCollider != null)
+
+        screwModelTransform = screwSetup.transform;
+        initialLocalPosition = transform.localPosition;
+        boxCollider = GetComponent<BoxCollider>();
+
+        if (boxCollider == null)
         {
-            boxCollider.enabled = true;
+            Debug.LogError("Thiếu BoxCollider!");
+            enabled = false;
+            return;
         }
+
+        boxCollider.enabled = true;
     }
 
     private void OnMouseDown()
@@ -57,36 +54,29 @@ public class ScrewController : MonoBehaviour
         if (boxCollider == null) yield break;
 
         Vector3 currentPosition = transform.position;
-        
-        // TÍNH HƯỚNG THÁO TRỰC TIẾP (World Space) TỪ MODEL
-        // Sử dụng screwModelTransform.up đã được xoay để lấy hướng tháo chính xác
         Vector3 extractionWorldDirection = screwModelTransform.up;
-       
-        
         Vector3 targetWorldPosition = currentPosition + extractionWorldDirection * moveDistance;
+
         Vector3 origin = transform.TransformPoint(boxCollider.center);
-        Vector3 halfExtents = boxCollider.size / 2f; 
+        Vector3 halfExtents = boxCollider.size / 2f;
         Quaternion orientation = transform.rotation;
 
-        // 1. KIỂM TRA OVERLAP
-        Vector3 checkSize = halfExtents - (Vector3.one * OverlapCheckPadding);
-        
+        // Kiểm tra overlap
         boxCollider.enabled = false;
-        Collider[] overlaps = Physics.OverlapBox(origin, checkSize, orientation, obstacleLayer);
+        Collider[] overlaps = Physics.OverlapBox(origin, halfExtents - Vector3.one * OverlapCheckPadding, orientation, obstacleLayer);
         boxCollider.enabled = true;
 
         if (overlaps.Any(c => c.transform != transform.parent))
         {
-            Debug.Log("Cannot move. Vít đang bị ĐÈ lên bởi vật thể khác.");
+            Debug.Log("Cannot move. Bị đè lên bởi vật thể khác.");
             yield break;
         }
 
-        // 2. BOXCAST
+        // Kiểm tra BoxCast
         float distance = Vector3.Distance(currentPosition, targetWorldPosition);
         float castDistance = distance + BoxCastOffset;
 
-        RaycastHit hit;
-        if (Physics.BoxCast(origin, halfExtents, extractionWorldDirection, out hit, orientation, castDistance, obstacleLayer))
+        if (Physics.BoxCast(origin, halfExtents, extractionWorldDirection, out RaycastHit hit, orientation, castDistance, obstacleLayer))
         {
             if (hit.collider.transform != transform && hit.collider.transform != transform.parent)
             {
@@ -96,27 +86,24 @@ public class ScrewController : MonoBehaviour
             }
         }
 
-        // Bắt đầu di chuyển mượt mà
         Debug.Log("Moving up. No obstacles detected.");
+        MMEventManager.TriggerEvent(new ReleaseScrew(this)); // 🔔 Phát sự kiện tháo vít
 
         float startTime = Time.time;
-        float journeyLength = distance; 
+        float journeyLength = distance;
         Vector3 startPos = currentPosition;
 
         while (Vector3.Distance(transform.position, targetWorldPosition) > 0.001f)
         {
             float distCovered = (Time.time - startTime) * moveSpeed;
-            float fractionOfJourney = distCovered / journeyLength;
-
-            transform.position = Vector3.Lerp(startPos, targetWorldPosition, fractionOfJourney);
-
+            float fraction = distCovered / journeyLength;
+            transform.position = Vector3.Lerp(startPos, targetWorldPosition, fraction);
             yield return null;
         }
 
-        // Hoàn tất tháo vít
         transform.position = targetWorldPosition;
-        transform.localPosition = transform.parent.InverseTransformPoint(targetWorldPosition); 
-        
+        transform.localPosition = transform.parent.InverseTransformPoint(targetWorldPosition);
+
         Debug.Log("Screw successfully removed!");
 
         if (cube != null)
@@ -125,5 +112,11 @@ public class ScrewController : MonoBehaviour
         }
 
         Destroy(gameObject, 0.5f);
+    }
+
+    // 🟢 Hàm public để lấy màu của vít
+    public ScrewColor GetColor()
+    {
+        return screwSetup != null ? screwSetup.screwColor : ScrewColor.Gray;
     }
 }

@@ -1,19 +1,20 @@
 using UnityEngine;
 
-using UnityEngine;
-
 public class ObjectRotateController : MonoBehaviour
 {
     public Transform target;          // Vật thể sẽ xoay
     public Camera mainCamera;         // Camera nhìn vật thể
     public float rotationSpeed = 3f;  // Tốc độ xoay
     public float zoomSpeed = 0.5f;    // Tốc độ zoom
-    public float minZoom = 5f;        // Giới hạn gần nhất
-    public float maxZoom = 15f;       // Giới hạn xa nhất
-
     private float yaw;
     private float pitch;
+
+    // Các biến zoom
+    private float minZoom;
+    private float maxZoom;
+    private float mediumZoom;
     private float currentDistance;
+
     void Start()
     {
         if (target == null || mainCamera == null)
@@ -23,18 +24,21 @@ public class ObjectRotateController : MonoBehaviour
             return;
         }
 
-        // BƯỚC SỬA ĐỔI: Đặt khoảng cách ban đầu ở giữa min và max zoom
-        currentDistance = (minZoom + maxZoom) / 2f; 
-        
-        // Đặt vị trí camera ngay lập tức
-        Vector3 initialDirection = (mainCamera.transform.position - target.position).normalized;
-        mainCamera.transform.position = target.position + initialDirection * currentDistance;
+        // 📏 Tính khoảng cách ban đầu giữa camera và target
+        mediumZoom = Vector3.Distance(mainCamera.transform.position, target.position);
 
-        // Khởi tạo góc xoay ban đầu của vật thể
+        // 🧮 Thiết lập min, max dựa theo medium ± 5f
+        minZoom = mediumZoom - 5f;
+        maxZoom = mediumZoom + 5f;
+
+        // Khoảng cách hiện tại = medium
+        currentDistance = mediumZoom;
+
+        // Lưu góc xoay ban đầu của target
         yaw = target.eulerAngles.y;
         pitch = target.eulerAngles.x;
 
-        // Đảm bảo camera nhìn vào mục tiêu (nếu cần)
+        // Đảm bảo camera nhìn vào vật thể
         mainCamera.transform.LookAt(target.position);
     }
 
@@ -64,9 +68,10 @@ public class ObjectRotateController : MonoBehaviour
 
     void LateUpdate()
     {
-        // Cập nhật vị trí camera sau khi zoom
+        // Cập nhật vị trí camera dựa trên khoảng cách hiện tại
         Vector3 dir = (mainCamera.transform.position - target.position).normalized;
         mainCamera.transform.position = target.position + dir * currentDistance;
+        mainCamera.transform.LookAt(target.position);
     }
 
     void RotateTarget(float deltaX, float deltaY)
@@ -89,7 +94,7 @@ public class ObjectRotateController : MonoBehaviour
         float prevMag = (prev0 - prev1).magnitude;
         float currentMag = (t0.position - t1.position).magnitude;
 
-        float diff = prevMag - currentMag; // dương = chụm lại = zoom in
+        float diff = prevMag - currentMag;
         currentDistance += diff * zoomSpeed * Time.deltaTime;
         currentDistance = Mathf.Clamp(currentDistance, minZoom, maxZoom);
     }
