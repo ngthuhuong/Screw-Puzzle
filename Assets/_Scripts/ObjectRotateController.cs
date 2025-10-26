@@ -1,107 +1,93 @@
 using UnityEngine;
 
-public class ObjectRotateController : MonoBehaviour
+public class ObjectRotateZoom_Mobile : MonoBehaviour
 {
-    public Transform target;          // Vật thể sẽ xoay
-    public Camera mainCamera;         // Camera nhìn vật thể
-    public float rotationSpeed = 3f;  // Tốc độ xoay
-    public float zoomSpeed = 0.5f;    // Tốc độ zoom
-    private float yaw;
-    private float pitch;
+    [Header("References")]
+    public Transform target; // Vật thể cần xoay
+    public float rotationSpeed = 0.3f;  // tốc độ xoay cho mobile
+    public float zoomSpeed = 0.01f;     // tốc độ zoom
+    public float minScale = 0.5f;       // giới hạn nhỏ nhất
+    public float maxScale = 2f;         // giới hạn lớn nhất
 
-    // Các biến zoom
-    private float minZoom;
-    private float maxZoom;
-    private float mediumZoom;
-    private float currentDistance;
-
-    void Start()
-    {
-        if (target == null || mainCamera == null)
-        {
-            Debug.LogError("Target hoặc Camera chưa được gán!");
-            enabled = false;
-            return;
-        }
-
-        // 📏 Tính khoảng cách ban đầu giữa camera và target
-        mediumZoom = Vector3.Distance(mainCamera.transform.position, target.position);
-
-        // 🧮 Thiết lập min, max dựa theo medium ± 5f
-        minZoom = mediumZoom - 5f;
-        maxZoom = mediumZoom + 5f;
-
-        // Khoảng cách hiện tại = medium
-        currentDistance = mediumZoom;
-
-        // Lưu góc xoay ban đầu của target
-        yaw = target.eulerAngles.y;
-        pitch = target.eulerAngles.x;
-
-        // Đảm bảo camera nhìn vào vật thể
-        mainCamera.transform.LookAt(target.position);
-    }
+    private Vector2 lastTouchPos;       // vị trí chạm trước đó
+    private bool isRotating = false;    // đang xoay?
 
     void Update()
     {
-        // Xoay vật thể
+        if (target == null) return;
+
+        // 🖱 PC test (chuột)
+        if (Input.touchCount == 0)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                isRotating = true;
+                lastTouchPos = Input.mousePosition;
+            }
+            else if (Input.GetMouseButton(0) && isRotating)
+            {
+                Vector2 delta = (Vector2)Input.mousePosition - lastTouchPos;
+                RotateTarget(delta.x, delta.y);
+                lastTouchPos = Input.mousePosition;
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                isRotating = false;
+            }
+
+            float scroll = Input.mouseScrollDelta.y;
+            if (Mathf.Abs(scroll) > 0.01f)
+            {
+                ZoomTarget(-scroll * zoomSpeed * 20f); // cuộn chuột
+            }
+        }
+
+        // 📱 Mobile touch
         if (Input.touchCount == 1)
         {
-            Touch touch = Input.GetTouch(0);
-            RotateTarget(touch.deltaPosition.x, touch.deltaPosition.y);
-        }
-        else if (Input.GetMouseButton(0))
-        {
-            RotateTarget(Input.GetAxis("Mouse X") * 10f, Input.GetAxis("Mouse Y") * 10f);
-        }
+            Touch t = Input.GetTouch(0);
 
-        // Zoom bằng pinch hoặc cuộn chuột
-        if (Input.touchCount == 2)
-        {
-            HandleTouchZoom();
+            if (t.phase == TouchPhase.Began)
+            {
+                lastTouchPos = t.position;
+                isRotating = true;
+            }
+            else if (t.phase == TouchPhase.Moved && isRotating)
+            {
+                Vector2 delta = t.deltaPosition;
+                RotateTarget(delta.x, delta.y);
+            }
+            else if (t.phase == TouchPhase.Ended)
+            {
+                isRotating = false;
+            }
         }
-        else if (Input.mouseScrollDelta.y != 0)
+        else if (Input.touchCount == 2)
         {
-            HandleScrollZoom(Input.mouseScrollDelta.y);
-        }
-    }
+            // 🔎 Pinch zoom
+            Touch t0 = Input.GetTouch(0);
+            Touch t1 = Input.GetTouch(1);
 
-    void LateUpdate()
-    {
-        // Cập nhật vị trí camera dựa trên khoảng cách hiện tại
-        Vector3 dir = (mainCamera.transform.position - target.position).normalized;
-        mainCamera.transform.position = target.position + dir * currentDistance;
-        mainCamera.transform.LookAt(target.position);
+            Vector2 prev0 = t0.position - t0.deltaPosition;
+            Vector2 prev1 = t1.position - t1.deltaPosition;
+
+            float prevDist = (prev0 - prev1).magnitude;
+            float currentDist = (t0.position - t1.position).magnitude;
+
+            float diff = currentDist - prevDist;
+            ZoomTarget(diff * zoomSpeed);
+        }
     }
 
     void RotateTarget(float deltaX, float deltaY)
     {
-        yaw -= deltaX * rotationSpeed;
-        pitch -= deltaY * rotationSpeed;
-        pitch = Mathf.Clamp(pitch, -80f, 80f);
-
-        target.rotation = Quaternion.Euler(pitch, yaw, 0f);
+        target.Rotate(Vector3.up, -deltaX * rotationSpeed, Space.World);
+        target.Rotate(Vector3.right, deltaY * rotationSpeed, Space.World);
     }
 
-    void HandleTouchZoom()
+    void ZoomTarget(float zoomAmount)
     {
-        Touch t0 = Input.GetTouch(0);
-        Touch t1 = Input.GetTouch(1);
-
-        Vector2 prev0 = t0.position - t0.deltaPosition;
-        Vector2 prev1 = t1.position - t1.deltaPosition;
-
-        float prevMag = (prev0 - prev1).magnitude;
-        float currentMag = (t0.position - t1.position).magnitude;
-
-        float diff = prevMag - currentMag;
-        currentDistance += diff * zoomSpeed * Time.deltaTime;
-        currentDistance = Mathf.Clamp(currentDistance, minZoom, maxZoom);
-    }
-
-    void HandleScrollZoom(float scrollDelta)
-    {
-        currentDistance -= scrollDelta * zoomSpeed;
-        currentDistance = Mathf.Clamp(currentDistance, minZoom, maxZoom);
+        float newScale = Mathf.Clamp(target.localScale.x + zoomAmount, minScale, maxScale);
+        target.localScale = Vector3.one * newScale;
     }
 }

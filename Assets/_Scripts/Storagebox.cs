@@ -9,9 +9,10 @@ public class StorageBox : MonoBehaviour
         return color == acceptedColor;
     }
 
-    public void MoveTo(ScrewController screw)
+    public void MoveTo(ScrewController screw, Vector3 targetPos)
     {
-        screw.transform.position = transform.position;
-        Debug.Log($"[StorageBox] {screw.name} đã được lưu vào box {acceptedColor}.");
+        StartCoroutine(screw.MoveTo(targetPos, null));
+
     }
+
 }

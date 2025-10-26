@@ -25,12 +25,12 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>
 
         if (box1 != null && box1.CompareColor(color))
         {
-            box1.MoveTo(screw);
+            box1.MoveTo(screw,box1.transform.position);
             stored = true;
         }
         else if (box2 != null && box2.CompareColor(color))
         {
-            box2.MoveTo(screw);
+            box2.MoveTo(screw, box2.transform.position);
             stored = true;
         }
 
@@ -39,7 +39,7 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>
             Transform slot = GetAvailableBackupSlot();
             if (slot != null)
             {
-                MoveTo(screw, slot.position);
+                StartCoroutine(screw.MoveTo(slot.position, slot));
                 Debug.Log($"[StorageController] {screw.name} sai màu, chuyển vào {slot.name}");
             }
             else
@@ -47,6 +47,8 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>
                 Debug.LogWarning("[StorageController] Không còn chỗ trống trong backup!");
             }
         }
+
+
     }
 
     private Transform GetAvailableBackupSlot()
@@ -58,6 +60,7 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>
 
     public void MoveTo(ScrewController screw, Vector3 targetPos)
     {
-        screw.transform.position = targetPos;
+        StartCoroutine(screw.MoveTo(targetPos, null));
     }
+
 }
