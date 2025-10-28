@@ -157,4 +157,8 @@ public class ScrewController : MonoBehaviour
         if (this != null)
             transform.position = targetPos;
     }
+    public void PlayAnim(string animName)
+    {
+            animator?.SetTrigger(animName);
+    }
 }

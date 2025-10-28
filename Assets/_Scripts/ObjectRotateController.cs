@@ -4,19 +4,29 @@ public class ObjectRotateZoom_Mobile : MonoBehaviour
 {
     [Header("References")]
     public Transform target; // Vật thể cần xoay
-    public float rotationSpeed = 0.3f;  // tốc độ xoay cho mobile
-    public float zoomSpeed = 0.01f;     // tốc độ zoom
-    public float minScale = 0.5f;       // giới hạn nhỏ nhất
-    public float maxScale = 2f;         // giới hạn lớn nhất
+    public float rotationSpeed = 0.3f;
+    public float zoomSpeed = 0.05f;
+    public float minDistance = 20f;   // khoảng cách gần nhất đến camera
+    public float maxDistance = 100f;  // khoảng cách xa nhất đến camera
 
-    private Vector2 lastTouchPos;       // vị trí chạm trước đó
-    private bool isRotating = false;    // đang xoay?
+    private Vector2 lastTouchPos;
+    private bool isRotating = false;
+
+    private Camera cam;
+    private float currentDistance;
+
+    void Start()
+    {
+        cam = Camera.main;
+        if (target != null)
+            currentDistance = Vector3.Distance(cam.transform.position, target.position);
+    }
 
     void Update()
     {
-        if (target == null) return;
+        if (target == null || cam == null) return;
 
-        // 🖱 PC test (chuột)
+        // --- PC TEST ---
         if (Input.touchCount == 0)
         {
             if (Input.GetMouseButtonDown(0))
@@ -38,15 +48,14 @@ public class ObjectRotateZoom_Mobile : MonoBehaviour
             float scroll = Input.mouseScrollDelta.y;
             if (Mathf.Abs(scroll) > 0.01f)
             {
-                ZoomTarget(-scroll * zoomSpeed * 20f); // cuộn chuột
+                ZoomTarget(-scroll * zoomSpeed * 20f);
             }
         }
 
-        // 📱 Mobile touch
+        // --- MOBILE ---
         if (Input.touchCount == 1)
         {
             Touch t = Input.GetTouch(0);
-
             if (t.phase == TouchPhase.Began)
             {
                 lastTouchPos = t.position;
@@ -64,7 +73,6 @@ public class ObjectRotateZoom_Mobile : MonoBehaviour
         }
         else if (Input.touchCount == 2)
         {
-            // 🔎 Pinch zoom
             Touch t0 = Input.GetTouch(0);
             Touch t1 = Input.GetTouch(1);
 
@@ -87,7 +95,13 @@ public class ObjectRotateZoom_Mobile : MonoBehaviour
 
     void ZoomTarget(float zoomAmount)
     {
-        float newScale = Mathf.Clamp(target.localScale.x + zoomAmount, minScale, maxScale);
-        target.localScale = Vector3.one * newScale;
+        // Tính hướng nhìn từ camera đến vật thể
+        Vector3 direction = (target.position - cam.transform.position).normalized;
+
+        // Cập nhật khoảng cách mới
+        currentDistance = Mathf.Clamp(currentDistance - zoomAmount, minDistance, maxDistance);
+
+        // Đặt lại vị trí của vật thể theo hướng nhìn camera
+        target.position = cam.transform.position + direction * currentDistance;
     }
 }
