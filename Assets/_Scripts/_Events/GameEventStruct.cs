@@ -9,3 +9,8 @@ public struct ReleaseScrew
         screwController = s;
     }
 }
+public struct BoxFull
+{
+    public StorageBox box;
+    public BoxFull(StorageBox b) { box = b; }
+}

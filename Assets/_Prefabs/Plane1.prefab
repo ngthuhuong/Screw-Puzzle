@@ -236,6 +236,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   acceptedColor: 0
+  screwSlots:
+  - {fileID: 9172293612471085111}
+  - {fileID: 3720343865257699995}
+  - {fileID: 710180090727193429}
+  approachDistance: 2
+  moveSpeed: 3
+  colorPresets: {fileID: 11400000, guid: 05477f8e3aad3cd41875556edbd059fa, type: 2}
 --- !u!1 &3607914089433218823
 GameObject:
   m_ObjectHideFlags: 0

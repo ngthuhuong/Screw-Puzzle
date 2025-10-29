@@ -74,11 +74,9 @@ public class ScrewController : MonoBehaviour
 
         if (overlaps.Any(c => c.transform != transform.parent))
         {
-            Debug.Log("❌ Bị đè lên, không thể tháo");
             yield break;
         }
 
-        Debug.Log("✅ Di chuyển ra ngoài...");
         MoveForward(); // chỉ gọi MoveForward, không xử lý event ở đây
 
         // Báo cube

@@ -22,5 +22,5 @@ public class LevelData : ScriptableObject
     // 3. Sử dụng List lồng nhau cho 3D (Z, Y, X)
     [Tooltip("Cấu trúc Level: List<Layer> (Z-Axis)")]
     public List<Layer> levelLayers; 
-
+    public List<ScrewColor> boxColors;
 }

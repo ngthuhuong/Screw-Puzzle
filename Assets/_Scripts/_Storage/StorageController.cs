@@ -1,10 +1,13 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Tools;
 
-public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>
+public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MMEventListener<BoxFull>
 {
+    [Header("Box Loader")]
+    public LoadBoxes boxLoader;
     [Header("Storage Boxes (2)")]
     public StorageBox box1;
     public StorageBox box2;
@@ -12,8 +15,17 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>
     [Header("Backup Holes (dự phòng khi Box đầy)")]
     public List<Transform> backupItems;
 
-    private void OnEnable() => this.MMEventStartListening<ReleaseScrew>();
-    private void OnDisable() => this.MMEventStopListening<ReleaseScrew>();
+    private void OnEnable()
+    {
+        this.MMEventStartListening<ReleaseScrew>();
+        this.MMEventStartListening<BoxFull>();
+    } 
+    private void OnDisable()
+    {
+        this.MMEventStopListening<ReleaseScrew>();
+        this.MMEventStopListening<BoxFull>();
+    }
+
 
     public void OnMMEvent(ReleaseScrew e)
     {
@@ -41,7 +53,7 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>
             if (holeSlot != null)
             {
                 StartCoroutine(MoveToHole(screw, holeSlot));
-                Debug.Log($"[StorageController] {screw.name} chuyển vào {holeSlot.name}");
+                //Debug.Log($"[StorageController] {screw.name} chuyển vào {holeSlot.name}");
             }
             else
             {
@@ -80,5 +92,24 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>
         screw.transform.SetParent(hole, true);
 
         screw.PlayAnim("isSpin");
+    }
+
+    public void OnMMEvent(BoxFull e)
+    {
+       // StorageBox fullBox = e.box;
+        StartCoroutine(HandleReplaceBox(e.box));
+    }
+
+    private IEnumerator HandleReplaceBox(StorageBox fullBox)
+    {  
+        Vector3 replacePos = fullBox.transform.position;
+        Quaternion replaceRot = fullBox.transform.rotation;
+       
+        yield return StartCoroutine(fullBox.MoveUpAndDisable()); //doi hop cu di chuyen len 
+ 
+        StorageBox newBox = boxLoader.LoadNextBox(replacePos, replaceRot);
+        if (fullBox == box1) box1 = newBox;
+        else if (fullBox == box2) box2 = newBox;
+
     }
 }
