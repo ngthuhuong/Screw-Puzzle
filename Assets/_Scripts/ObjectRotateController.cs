@@ -24,6 +24,7 @@ public class ObjectRotateZoom_Mobile : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance.InputLocked) return;
         if (target == null || cam == null) return;
 
         // --- PC TEST ---

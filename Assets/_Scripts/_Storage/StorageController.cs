@@ -110,6 +110,36 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
         StorageBox newBox = boxLoader.LoadNextBox(replacePos, replaceRot);
         if (fullBox == box1) box1 = newBox;
         else if (fullBox == box2) box2 = newBox;
+        yield return new WaitForSeconds(0.5f);
 
+        // ✅ Sau đó kiểm tra backup
+        TryFillFromBackup(newBox);
     }
+    
+    public void TryFillFromBackup(StorageBox targetBox)
+    {
+        if (targetBox == null) return;
+
+        List<Transform> matchedScrews = new List<Transform>();
+
+        foreach (Transform backup in backupItems)
+        {
+            if (backup.childCount > 0)
+            {
+                ScrewController screw = backup.GetChild(0).GetComponent<ScrewController>();
+                if (screw != null && screw.GetColor() == targetBox.acceptedColor)
+                {
+                    matchedScrews.Add(screw.transform);
+                }
+            }
+        }
+
+        foreach (Transform screwTrans in matchedScrews)
+        {
+            ScrewController screw = screwTrans.GetComponent<ScrewController>();
+            targetBox.MoveTo(screw);
+            Debug.Log($"[StorageController] Di chuyển {screw.name} từ backup vào {targetBox.name}");
+        }
+    }
+
 }

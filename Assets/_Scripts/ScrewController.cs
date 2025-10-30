@@ -44,6 +44,7 @@ public class ScrewController : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (GameManager.Instance.InputLocked) return;
         animator?.SetTrigger("isClicked");
         StartCoroutine(PlayBounceThenMove());
     }
