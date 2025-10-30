@@ -5,19 +5,9 @@ public enum GameState { MainMenu, Playing, Paused, GameOver }
 
 public class GameManager : MMSingleton<GameManager>
 {
-    // Giữ nguyên phần của bạn
     public bool InputLocked { get; private set; }
-
-    // Trạng thái hiện tại của game
     public GameState CurrentState { get; private set; } = GameState.MainMenu;
-
-    [Header("Scene References")]
-    public GameObject mainMenu;      // UI Trang chủ
-    public GameObject gameplayUI;    // UI Khi chơi
-  //  public GameObject pauseMenu;     // UI Tạm dừng
-    //public GameObject gameOverUI;    // UI Kết thúc
-    public GameObject gameplayRoot;  // Toàn bộ object gameplay
-
+    [SerializeField] private GameObject gameplayRoot;
     public void LockInput()
     {
         InputLocked = true;
@@ -56,20 +46,25 @@ public class GameManager : MMSingleton<GameManager>
     private void SetState(GameState newState)
     {
         CurrentState = newState;
+        switch (newState)
+        {
+            case GameState.MainMenu:
+                GUIManager.Instance.ShowMainMenu();
+                gameplayRoot.SetActive(false);
+                break;
+            case GameState.Playing:
+                GUIManager.Instance.ShowInGameUI();
+                gameplayRoot.SetActive(true);
+                UnlockInput();
+                break;
+            //con win +lose
+            
+        }
+        
 
-        // Ẩn/hiện các UI tương ứng
-        mainMenu.SetActive(newState == GameState.MainMenu);
-        gameplayUI.SetActive(newState == GameState.Playing);
-       // pauseMenu.SetActive(newState == GameState.Paused);
-       //gameOverUI.SetActive(newState == GameState.GameOver);
-
-        // Bật / tắt gameplay root
-        gameplayRoot.SetActive(newState == GameState.Playing || newState == GameState.Paused);
-
-        // Dừng thời gian nếu cần
+        //tạm dưngf + thua
         Time.timeScale = (newState == GameState.Paused || newState == GameState.GameOver) ? 0 : 1;
 
-        // Khóa input trong các trạng thái không phải Playing
         if (newState == GameState.Playing)
             UnlockInput();
         else

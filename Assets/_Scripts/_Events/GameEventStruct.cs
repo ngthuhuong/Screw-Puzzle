@@ -14,3 +14,4 @@ public struct BoxFull
     public StorageBox box;
     public BoxFull(StorageBox b) { box = b; }
 }
+

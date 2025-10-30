@@ -1,33 +1,47 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ObjectRotateZoom_Mobile : MonoBehaviour
 {
     [Header("References")]
-    public Transform target; // Vật thể cần xoay
+    public Transform target;
+    public Slider zoomSlider; // slider UI (có thể null nếu không dùng)
     public float rotationSpeed = 0.3f;
     public float zoomSpeed = 0.05f;
-    public float minDistance = 20f;   // khoảng cách gần nhất đến camera
-    public float maxDistance = 100f;  // khoảng cách xa nhất đến camera
+    public float minDistance = 20f;
+    public float maxDistance = 100f;
 
     private Vector2 lastTouchPos;
     private bool isRotating = false;
-
     private Camera cam;
     private float currentDistance;
+
+    public float CurrentDistance => currentDistance;
 
     void Start()
     {
         cam = Camera.main;
         if (target != null)
             currentDistance = Vector3.Distance(cam.transform.position, target.position);
+
+        // Khởi tạo slider
+        if(zoomSlider != null)
+        {
+            zoomSlider.minValue = minDistance;
+            zoomSlider.maxValue = maxDistance;
+
+            float normalized = (currentDistance - minDistance) / (maxDistance - minDistance);
+            zoomSlider.value = Mathf.Lerp(maxDistance, minDistance, normalized);
+
+            zoomSlider.onValueChanged.AddListener(OnSliderChanged);
+        }
     }
 
     void Update()
     {
-        if (GameManager.Instance.InputLocked) return;
-        if (target == null || cam == null) return;
+        if (GameManager.Instance.InputLocked || target == null || cam == null) return;
 
-        // --- PC TEST ---
+        // --- PC ---
         if (Input.touchCount == 0)
         {
             if (Input.GetMouseButtonDown(0))
@@ -53,7 +67,7 @@ public class ObjectRotateZoom_Mobile : MonoBehaviour
             }
         }
 
-        // --- MOBILE ---
+        // --- Mobile ---
         if (Input.touchCount == 1)
         {
             Touch t = Input.GetTouch(0);
@@ -64,8 +78,7 @@ public class ObjectRotateZoom_Mobile : MonoBehaviour
             }
             else if (t.phase == TouchPhase.Moved && isRotating)
             {
-                Vector2 delta = t.deltaPosition;
-                RotateTarget(delta.x, delta.y);
+                RotateTarget(t.deltaPosition.x, t.deltaPosition.y);
             }
             else if (t.phase == TouchPhase.Ended)
             {
@@ -81,9 +94,9 @@ public class ObjectRotateZoom_Mobile : MonoBehaviour
             Vector2 prev1 = t1.position - t1.deltaPosition;
 
             float prevDist = (prev0 - prev1).magnitude;
-            float currentDist = (t0.position - t1.position).magnitude;
+            float currDist = (t0.position - t1.position).magnitude;
 
-            float diff = currentDist - prevDist;
+            float diff = currDist - prevDist;
             ZoomTarget(diff * zoomSpeed);
         }
     }
@@ -94,15 +107,37 @@ public class ObjectRotateZoom_Mobile : MonoBehaviour
         target.Rotate(Vector3.right, deltaY * rotationSpeed, Space.World);
     }
 
-    void ZoomTarget(float zoomAmount)
+    public void ZoomTarget(float zoomAmount)
     {
-        // Tính hướng nhìn từ camera đến vật thể
         Vector3 direction = (target.position - cam.transform.position).normalized;
-
-        // Cập nhật khoảng cách mới
         currentDistance = Mathf.Clamp(currentDistance - zoomAmount, minDistance, maxDistance);
-
-        // Đặt lại vị trí của vật thể theo hướng nhìn camera
         target.position = cam.transform.position + direction * currentDistance;
+
+        UpdateSlider();
+    }
+
+    public void SetZoom(float sliderValue)
+    {
+        // đảo ngược: slider lớn → vật đi xa
+        float normalized = (sliderValue - minDistance) / (maxDistance - minDistance);
+        float zoomDistance = Mathf.Lerp(maxDistance, minDistance, normalized);
+        currentDistance = Mathf.Clamp(zoomDistance, minDistance, maxDistance);
+
+        Vector3 direction = (target.position - cam.transform.position).normalized;
+        target.position = cam.transform.position + direction * currentDistance;
+    }
+
+    private void OnSliderChanged(float value)
+    {
+        SetZoom(value);
+    }
+
+    private void UpdateSlider()
+    {
+        if(zoomSlider != null)
+        {
+            float normalized = (currentDistance - minDistance) / (maxDistance - minDistance);
+            zoomSlider.value = Mathf.Lerp(maxDistance, minDistance, normalized);
+        }
     }
 }
