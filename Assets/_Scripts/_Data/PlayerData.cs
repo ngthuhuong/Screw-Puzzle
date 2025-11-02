@@ -1,4 +1,5 @@
 using UnityEngine;
+using MoreMountains.Tools;
 
 [System.Serializable]
 public class PlayerData
@@ -24,12 +25,19 @@ public class PlayerData
         PlayerPrefs.SetInt(LIVES_KEY, lives);
         PlayerPrefs.Save();
     }
+    public void LoadDefaults()
+    {
+        coin = 0;
+        lives = 3;
+        Save();
+    }
   
 
     public void AddCoin(int amount)
     {
         coin += amount;
         Save();
+        MMEventManager.TriggerEvent(new DataChange());
     }
 
     public bool UseCoin(int amount)
@@ -46,7 +54,10 @@ public class PlayerData
     public void LoseLife()
     {
         if (lives > 0) lives--;
+        Debug.Log("-1 mang");
         Save();
+        MMEventManager.TriggerEvent(new DataChange());
+
     }
 
     public void ResetLives(int newLives = 3)

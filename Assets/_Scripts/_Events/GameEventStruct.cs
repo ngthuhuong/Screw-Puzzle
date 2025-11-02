@@ -29,3 +29,9 @@ public struct Confirm
         isYes = yes; 
     }
 }
+public struct DataChange
+{
+   
+    
+}
+

@@ -17,7 +17,7 @@ public class DataManager : MMSingleton<DataManager>
     private void LoadPlayerData()
     {
         PlayerData = new PlayerData();
-        PlayerData.Load();
+        PlayerData.LoadDefaults();
     }
 
     public void SavePlayerData()

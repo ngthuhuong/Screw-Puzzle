@@ -56,6 +56,7 @@ public class GameManager : MMSingleton<GameManager>
                 GUIManager.Instance.ShowInGameUI();
                 gameplayRoot.SetActive(true);
                 UnlockInput();
+                DataManager.Instance.PlayerData.LoseLife();
                 break;
             //con win +lose
             

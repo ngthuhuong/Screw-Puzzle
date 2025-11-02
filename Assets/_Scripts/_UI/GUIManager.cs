@@ -2,7 +2,8 @@ using System;
 using MoreMountains.Tools;
 using UnityEngine;
 
-public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEventListener<Confirm>
+public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEventListener<Confirm>,
+    MMEventListener<DataChange>
 {
     [SerializeField] private GUIMenuController mainMenu;
     [SerializeField] private UIGameplayController inGameUI;
@@ -15,11 +16,11 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
         if(inGameUI == null) inGameUI = GetComponentInChildren<UIGameplayController>();
         if(popupUI == null) popupUI = GetComponentInChildren<PopupController>();
         if(marketingPanel == null) marketingPanel = GetComponentInChildren<MarketingPanel>();
-       // mainMenu.Show();
-      //  inGameUI.Hide();
+        mainMenu.Show();
+        inGameUI.Hide();
       //
-        mainMenu.Hide();
-        inGameUI.Show();
+      //  mainMenu.Hide();
+       // inGameUI.Show();
         popupUI.Hide();
         marketingPanel.Hide();
     }
@@ -28,12 +29,14 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
     {
         this.MMEventStartListening<LoseGame>();
         this.MMEventStartListening<Confirm>();
+        this.MMEventStartListening<DataChange>();
 
     }
     private void OnDisable()
     {
         this.MMEventStopListening<LoseGame>();
         this.MMEventStopListening<Confirm>();
+        this.MMEventStopListening<DataChange>();
     }
 
     //play game
@@ -95,5 +98,15 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
                 }
                 break;
         }
+    }
+
+    public void OnMMEvent(DataChange eventType)
+    {
+        mainMenu.UpdatePlayerResources();
+    }
+
+    public void ShowMarketingPanel()
+    {
+        marketingPanel.Show();
     }
 }

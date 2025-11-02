@@ -22,6 +22,20 @@ public class GUIMenuController : GUIBase
 
     private void HandlePlayButton()
     {
+        Debug.Log("Play clicked, lives = " + DataManager.Instance.PlayerData.Lives);
+
+        if (DataManager.Instance.PlayerData.Lives <= 0)
+        {
+            GUIManager.Instance.ShowMarketingPanel();
+            return;
+        }
+
         GameManager.Instance.ResumeGame();
+        
+    }
+    public void UpdatePlayerResources()
+    {
+        playerCoin.text = DataManager.Instance.PlayerData.Coin.ToString();
+        playerHeart.text = DataManager.Instance.PlayerData.Lives.ToString();
     }
 }
