@@ -15,3 +15,17 @@ public struct BoxFull
     public BoxFull(StorageBox b) { box = b; }
 }
 
+public struct LoseGame
+{
+    
+}
+public struct Confirm
+{
+    public string tag;
+    public bool isYes;
+    public Confirm(string m,bool yes)
+    {
+        tag = m;
+        isYes = yes; 
+    }
+}

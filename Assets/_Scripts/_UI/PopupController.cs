@@ -1,4 +1,7 @@
+using MoreMountains.Tools;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PopupController : GUIBase
 {
@@ -6,18 +9,18 @@ public class PopupController : GUIBase
     [SerializeField] private GameObject winGroup;
     [SerializeField] private GameObject loseGroup;
     [SerializeField] private GameObject confirmGroup;
+    [SerializeField] public Button backToMenuButton;
+    
+    [SerializeField] private ConfirmController confirmPanel;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        backToMenuButton.onClick.AddListener(HandleBackToMenuButton);
+      
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
     private void UnableAllGroups()
     {
         buttonGroup.SetActive(false);
@@ -38,16 +41,27 @@ public class PopupController : GUIBase
         UnableAllGroups();
         winGroup.SetActive(enable);
     }
-    public void EnableConfirmGroup(bool enable)
+    public void EnableConfirmGroup(string message, string tag)
     {
         Show();
         UnableAllGroups();
-        confirmGroup.SetActive(enable);
+        confirmGroup.SetActive(true);
+        confirmPanel.Show(message, tag);
     }
     public void EnableLoseGroup(bool enable)
     {
         Show();
         UnableAllGroups();
         loseGroup.SetActive(enable);
+    }
+        
+    private void HandleBackToMenuButton()
+    {
+        EnableConfirmGroup("Are you sure you want to return to the main menu?","BackToMenu");
+    }
+    
+    public void HandleLoseGame()
+    {
+        EnableLoseGroup(true);
     }
 }

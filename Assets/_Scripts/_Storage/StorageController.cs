@@ -52,12 +52,7 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
             Transform holeSlot = GetAvailableBackupSlot();
             if (holeSlot != null)
             {
-                StartCoroutine(MoveToHole(screw, holeSlot));
-                //Debug.Log($"[StorageController] {screw.name} chuyển vào {holeSlot.name}");
-            }
-            else
-            {
-                Debug.LogWarning("[StorageController] Không còn chỗ trống trong các hole!");
+                StartCoroutine(MoveToHole(screw, holeSlot)); //kiẻm tra trong cổutine luon
             }
         }
     }
@@ -88,10 +83,19 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
         }
 
         screw.transform.rotation = Quaternion.LookRotation(hole.forward, hole.up);
-
         screw.transform.SetParent(hole, true);
-
         screw.PlayAnim("isSpin");
+        
+        if (NoMoreBackupSlots())
+        {
+            MMEventManager.TriggerEvent(new LoseGame());
+        }
+    }
+    private bool NoMoreBackupSlots()
+    {
+        foreach (Transform t in backupItems)
+            if (t.childCount == 0) return false; 
+        return true; 
     }
 
     public void OnMMEvent(BoxFull e)
