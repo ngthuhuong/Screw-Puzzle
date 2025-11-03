@@ -138,11 +138,20 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
             }
         }
 
-        foreach (Transform screwTrans in matchedScrews)
+        if (matchedScrews.Count > 0)
+            FillFromBackupInOrder(targetBox, matchedScrews);
+    }
+
+    private void FillFromBackupInOrder(StorageBox targetBox, List<Transform> screws)
+    {
+        List<Transform> freeSlots = targetBox.GetAllFreeSlots();
+        int count = Mathf.Min(screws.Count, freeSlots.Count);
+
+        for (int i = 0; i < count; i++)
         {
-            ScrewController screw = screwTrans.GetComponent<ScrewController>();
-            targetBox.MoveTo(screw);
-            Debug.Log($"[StorageController] Di chuyển {screw.name} từ backup vào {targetBox.name}");
+            ScrewController screw = screws[i].GetComponent<ScrewController>();
+            targetBox.MoveToFromHole(screw, freeSlots[i]);
+            Debug.Log($"[StorageController] (Batch) Di chuyển {screw.name} vào slot {freeSlots[i].name} của {targetBox.name}");
         }
     }
 

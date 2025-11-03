@@ -67,12 +67,28 @@ public class StorageBox : MonoBehaviour
         StartCoroutine(MoveScrewToSlot(screw, emptySlot));
     }
 
+    public void MoveToFromHole(ScrewController screw, Transform targetSlot)
+    {
+        if (screw == null || targetSlot == null) return;
+        StartCoroutine(MoveScrewToSlot(screw, targetSlot));
+    }
+
+    
+
     private Transform GetAvailableSlot()
     {
         foreach (Transform t in screwSlots)
             if (t.childCount == 0) return t;
         return null;
     }
+    public List<Transform> GetAllFreeSlots()
+    {
+        List<Transform> list = new List<Transform>();
+        foreach (Transform t in screwSlots)
+            if (t.childCount == 0) list.Add(t);
+        return list;
+    }
+
 
     private IEnumerator MoveScrewToSlot(ScrewController screw, Transform slot)
     {
