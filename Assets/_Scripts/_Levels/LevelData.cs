@@ -1,11 +1,30 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System; 
+[Serializable]
+public struct ScrewInfo
+{
+    [Tooltip("Hướng của vít (1=Top, 2=Bottom, ...)")]
+    public ScrewFace direction;
+    [Tooltip("Màu của vít")]
+    public ScrewColor color;
+}
+
+[Serializable]
+public struct CubeBlock // Đây sẽ thay thế cho 'int' cũ
+{
+    [Tooltip("Danh sách các vít trên khối này.")]
+    public List<ScrewInfo> screws;
+    
+    // Nếu bạn muốn lưu loại khối (ví dụ: khối đặc, khối rỗng, v.v.), bạn có thể thêm:
+    // public int blockType; 
+}
 
 [Serializable]
 public struct Row
 {
-    public List<int> columns; 
+    // columns không còn là List<int> nữa
+    public List<CubeBlock> columns; 
 }
 
 [Serializable]
@@ -17,10 +36,15 @@ public struct Layer
 [CreateAssetMenu(fileName = "NewLevelData", menuName = "Game/Level Data")]
 public class LevelData : ScriptableObject
 {
-    public GameObject[] plankModules; 
+    // Chỉ cần một Prefab khối cơ bản chứa 6 vít (tất cả đều bị disable ban đầu)
+    public GameObject plankModule; 
 
-    // 3. Sử dụng List lồng nhau cho 3D (Z, Y, X)
-    [Tooltip("Cấu trúc Level: List<Layer> (Z-Axis)")]
+    // Level Structure (Z, Y, X)
     public List<Layer> levelLayers; 
-    public List<ScrewColor> boxColors;
+    
+    // Danh sách màu bạn đã đề cập (có thể dùng Enum thay thế)
+     public List<ScrewColor> boxColors; 
+    
+    // Nếu bạn muốn định nghĩa Prefab vít cho từng màu, có thể thêm:
+    // public Dictionary<ScrewColor, GameObject> screwPrefabs;
 }

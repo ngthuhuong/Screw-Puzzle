@@ -3,12 +3,13 @@ using UnityEngine;
 // Đặt tên file là ScrewFace.cs
 public enum ScrewFace
 {
-    Top,
-    Bottom,
-    Front,
-    Back,
-    Right,
-    Left
+    Top=1,
+    Bottom=2,
+    Front=3,
+    Back=4,
+    Right=5,
+    Left=6,
+    None=0
     // Có thể thêm các hướng chéo nếu cần
 }
 // Đảm bảo struct này hiển thị trong Inspector

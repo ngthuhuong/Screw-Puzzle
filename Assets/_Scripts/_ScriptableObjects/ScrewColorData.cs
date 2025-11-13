@@ -5,11 +5,11 @@ using System.Collections.Generic;
 // Enum đại diện cho các loại màu/chất liệu vít
 public enum ScrewColor
 {
-    Blue,
-    Red,
-    Green,
-    Orange,
-    Purple,
+    Blue=1,
+    Red=2,
+    Green=3,
+    Orange=4,
+    Purple=5,
     Gray
 }
 
