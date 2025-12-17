@@ -1,0 +1,58 @@
+{
+  "levelId": 1,
+  "grid": {
+    "layers": [
+      {
+        "rows": [
+          {
+            "columns": [
+              {
+                "screws": [
+                  {
+                    "direction": 1,
+                    "color": 2
+                  },
+                  {
+                    "direction": 5,
+                    "color": 1
+                  }
+                ]
+              },
+              {
+                "screws": [
+                  {
+                    "direction": 3,
+                    "color": 0
+                  }
+                ]
+              },
+              {
+                "screws": [
+                  {
+                    "direction": 3,
+                    "color": 3
+                  }
+                ]
+              },
+              {
+                "screws": [
+                  {
+                    "direction": 4,
+                    "color": 2
+                  },
+                  {
+                    "direction": 2,
+                    "color": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "solution": {
+    "colors": [1, 2, 1, 3]
+  }
+}

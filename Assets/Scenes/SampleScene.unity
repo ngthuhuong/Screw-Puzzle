@@ -5549,9 +5549,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   builder: {fileID: 68992959}
-  levelJsonFiles:
-  - {fileID: 4900000, guid: 4165b6757e8ae1c4b9e9cc2877af8467, type: 3}
-  - {fileID: 4900000, guid: 15f3adcbdfd295e46b85f69eff59d01a, type: 3}
+  totalLevels: 100
 --- !u!1 &1793481024
 GameObject:
   m_ObjectHideFlags: 0

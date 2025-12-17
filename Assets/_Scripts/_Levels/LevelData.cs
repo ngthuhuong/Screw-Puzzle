@@ -48,3 +48,20 @@ public class LevelData : ScriptableObject
     // Nếu bạn muốn định nghĩa Prefab vít cho từng màu, có thể thêm:
     // public Dictionary<ScrewColor, GameObject> screwPrefabs;
 }
+[System.Serializable]
+public class JsonLevelData
+{
+    public int levelId;
+    public JsonGridData grid;
+    public JsonSolutionData solution;
+}
+[System.Serializable]
+public class JsonGridData
+{
+    public List<Layer> layers;
+}
+[System.Serializable]
+public class JsonSolutionData
+{
+    public List<int> colors;
+}

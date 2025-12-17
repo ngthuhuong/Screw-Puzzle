@@ -7,13 +7,12 @@ public static class LevelJsonLoader
 {
     public static LevelRuntimeData LoadFromJson(TextAsset jsonAsset)
     {
-        JsonLevelStructure json = JsonUtility.FromJson<JsonLevelStructure>(jsonAsset.text);
+        JsonLevelData jsonData =
+            JsonUtility.FromJson<JsonLevelData>(jsonAsset.text);
 
-        LevelRuntimeData runtimeData = new LevelRuntimeData();
-        runtimeData.levelLayers = Convert(json);
-
-        return runtimeData;
+        return new LevelRuntimeData(jsonData);
     }
+
 
     private static List<Layer> Convert(JsonLevelStructure json)
     {
