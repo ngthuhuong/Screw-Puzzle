@@ -76,19 +76,30 @@ public class LevelBuilder : MonoBehaviour
                     GameObject cubeInstance;
 
 #if UNITY_EDITOR
-                    cubeInstance = (GameObject)PrefabUtility.InstantiatePrefab(
-                        plankModulePrefab, buildContainer
-                    );
-                    cubeInstance.transform.localPosition = spawnPosition;
-                    Undo.RegisterCreatedObjectUndo(cubeInstance, "Create Cube");
+                    if (!Application.isPlaying)
+                    {
+                        cubeInstance = (GameObject)PrefabUtility.InstantiatePrefab(
+                            plankModulePrefab, buildContainer
+                        );
+                    }
+                    else
+                    {
+                        cubeInstance = Instantiate(
+                            plankModulePrefab,
+                            spawnPosition,
+                            Quaternion.identity,
+                            buildContainer
+                        );
+                    }
 #else
-                    cubeInstance = Instantiate(
-                        plankModulePrefab,
-                        spawnPosition,
-                        Quaternion.identity,
-                        buildContainer
-                    );
+cubeInstance = Instantiate(
+    plankModulePrefab,
+    spawnPosition,
+    Quaternion.identity,
+    buildContainer
+);
 #endif
+
 
                     cubeInstance.name = $"{plankModulePrefab.name}_{x}_{y}_{z}";
 
