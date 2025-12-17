@@ -5,15 +5,18 @@ public class CubeController : MonoBehaviour
 {
     private List<ScrewController> activeScrews; // Danh sách các vít đang hoạt động
     private Rigidbody rb;
-    private bool isReleased = false; // tránh gọi lại nhiều lần
-    
-    [Header("screws face")]
-    public GameObject screwTop;
-    public GameObject screwBottom;
-    public GameObject screwFront;
-    public GameObject screwBack;
-    public GameObject screwRight;
-    public GameObject screwLeft;
+    private bool isReleased = false; 
+    private bool isFading = false;
+
+    public GameObject cubeModel;
+    [Header("screws inside")]
+    public ScrewSetup screwTop;
+    public ScrewSetup screwBottom;
+    public ScrewSetup screwFront;
+    public ScrewSetup screwBack;
+    public ScrewSetup screwRight;
+    public ScrewSetup screwLeft;
+
     
     
     void Start()
@@ -59,7 +62,42 @@ public class CubeController : MonoBehaviour
             Debug.Log($"{gameObject.name}: Rơi khỏi màn hình -> Hủy.");
             Destroy(gameObject);
         }
+        // Kiểm tra nhấn giữ chuột phải
+        if (Input.GetMouseButton(1)) // Chuột phải
+        {
+            if (!isFading)
+            {
+                isFading = true;
+                FadeChild(cubeModel, true);
+            }
+        }
+        else if (isFading)
+        {
+            isFading = false;
+            FadeChild(cubeModel, false);
+        }
     }
+    private void FadeChild(GameObject child, bool fade)
+    {
+        Renderer childRenderer = child.GetComponent<Renderer>();
+        if (childRenderer != null)
+        {
+            Material childMaterial = childRenderer.material;
+            Color color = childMaterial.color;
+
+            if (fade)
+            {
+                color.a = 0.5f; // Set opacity to 50%
+            }
+            else
+            {
+                color.a = 1.0f; // Restore full opacity
+            }
+
+            childMaterial.color = color;
+        }
+    }
+
 
     private bool IsVisibleFrom(Camera cam)
     {
@@ -74,23 +112,23 @@ public class CubeController : MonoBehaviour
     //control list of screws
     public void EnableAllScrews()
     {
-        screwTop.SetActive(true);
-        screwBottom.SetActive(true);
-        screwFront.SetActive(true);
-        screwBack.SetActive(true);
-        screwRight.SetActive(true);
-        screwLeft.SetActive(true);
+        screwTop.gameObject.SetActive(true);
+        screwBottom.gameObject.SetActive(true);
+        screwFront.gameObject.SetActive(true);
+        screwBack.gameObject.SetActive(true);
+        screwRight.gameObject.SetActive(true);
+        screwLeft.gameObject.SetActive(true);
     }
 
     // Disable tất cả vít
     public void DisableAllScrews()
     {
-        screwTop.SetActive(false);
-        screwBottom.SetActive(false);
-        screwFront.SetActive(false);
-        screwBack.SetActive(false);
-        screwRight.SetActive(false);
-        screwLeft.SetActive(false);
+        screwTop.gameObject.SetActive(false);
+        screwBottom.gameObject.SetActive(false);
+        screwFront.gameObject.SetActive(false);
+        screwBack.gameObject.SetActive(false);
+        screwRight.gameObject.SetActive(false);
+        screwLeft.gameObject.SetActive(false);
     }
 
     // Enable/Disable theo hướng cụ thể
@@ -98,22 +136,44 @@ public class CubeController : MonoBehaviour
     {
         switch (face)
         {
-            case ScrewFace.Top: screwTop.SetActive(active); break;
-            case ScrewFace.Bottom: screwBottom.SetActive(active); break;
-            case ScrewFace.Front: screwFront.SetActive(active); break;
-            case ScrewFace.Back: screwBack.SetActive(active); break;
-            case ScrewFace.Right: screwRight.SetActive(active); break;
-            case ScrewFace.Left: screwLeft.SetActive(active); break;
+            case ScrewFace.Top: screwTop.gameObject.SetActive(active); break;
+            case ScrewFace.Bottom: screwBottom.gameObject.SetActive(active); break;
+            case ScrewFace.Front: screwFront.gameObject.SetActive(active); break;
+            case ScrewFace.Back: screwBack.gameObject.SetActive(active); break;
+            case ScrewFace.Right: screwRight.gameObject.SetActive(active); break;
+            case ScrewFace.Left: screwLeft.gameObject.SetActive(active); break;
         }
     }
+    private ScrewSetup GetScrewSetup(ScrewFace face)
+    {
+        switch (face)
+        {
+            case ScrewFace.Top: return screwTop;
+            case ScrewFace.Bottom: return screwBottom;
+            case ScrewFace.Front: return screwFront;
+            case ScrewFace.Back: return screwBack;
+            case ScrewFace.Right: return screwRight;
+            case ScrewFace.Left: return screwLeft;
+        }
+        return null;
+    }
+
+
     
     public void Initialize(List<ScrewInfo> screws)
     {
         DisableAllScrews();
-        // 2. Duyệt qua danh sách và Bật/Thiết lập màu
+
         foreach (var info in screws)
         {
-            SetScrewActive(info.direction, true);
+            ScrewSetup setup = GetScrewSetup(info.direction);
+
+            if (setup != null)
+            {
+                setup.ApplyColor(info.color);
+                setup.gameObject.SetActive(true);
+            }
         }
     }
+
 }

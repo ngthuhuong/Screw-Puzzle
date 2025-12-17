@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: colorPresets
       value: 
       objectReference: {fileID: 11400000, guid: 05477f8e3aad3cd41875556edbd059fa, type: 2}
+    - target: {fileID: 3156272681484737720, guid: fb086a58ba4fea64a9caf937d9dc5258, type: 3}
+      propertyPath: cubeModel
+      value: 
+      objectReference: {fileID: 1359583047589153033}
     - target: {fileID: 4248972316406663852, guid: fb086a58ba4fea64a9caf937d9dc5258, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -80,6 +84,11 @@ PrefabInstance:
       addedObject: {fileID: 6792215938391147196}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fb086a58ba4fea64a9caf937d9dc5258, type: 3}
+--- !u!1 &1359583047589153033 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4112133127471716363, guid: fb086a58ba4fea64a9caf937d9dc5258, type: 3}
+  m_PrefabInstance: {fileID: 3156758213913776386}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3804526287990532252 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2234746794757011870, guid: fb086a58ba4fea64a9caf937d9dc5258, type: 3}

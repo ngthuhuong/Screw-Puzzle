@@ -10,7 +10,7 @@ public enum ScrewColor
     Green=3,
     Orange=4,
     Purple=5,
-    Gray
+    Gray =0
 }
 
 [Serializable]

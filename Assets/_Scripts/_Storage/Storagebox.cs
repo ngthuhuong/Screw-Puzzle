@@ -12,21 +12,31 @@ public class StorageBox : MonoBehaviour
     public float approachDistance = 2f;
     public float moveSpeed = 3f;
     
-    private MeshRenderer meshRenderer;
-    public ScrewColorPresets colorPresets;
+    public MeshRenderer meshRenderer;
+    private ScrewColorPresets colorPresets  ;
     
     public float moveUpDistance = 2.5f;   // khoảng di chuyển lên trên
     public float moveDownDistance = 2.5f; // khoảng di chuyển xuống
     public float transitionSpeed = 2f;
 
-    void Awake()
+    void Awake() 
     {
-        meshRenderer = GetComponentInChildren<MeshRenderer>();
+        meshRenderer = GetComponentInChildren<MeshRenderer>(true); 
+        
+        if (GameManager.Instance != null)
+        {
+            colorPresets = GameManager.Instance.palletColor;
+        }
+        else
+        {
+            Debug.LogError("[StorageBox] GameManager.Instance không tồn tại khi Awake!");
+        }
     }
 
     public void SetColor(ScrewColor color)
     {
         acceptedColor = color; // Cập nhật luôn màu được chấp nhận
+        Debug.Log($"[StorageBox - SetColor] Đang cố gắng set màu cho Box {name} thành: {color}");
         if (meshRenderer != null && colorPresets != null)
         {
             Material mat = colorPresets.GetMaterial(color);

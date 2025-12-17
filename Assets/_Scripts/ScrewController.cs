@@ -15,7 +15,8 @@ public class ScrewController : MonoBehaviour
     private Animator animator;
 
     private BoxCollider boxCollider;
-
+    private bool isInterable = true;
+    public bool IsInterable { get => isInterable; set => isInterable = value; }
     void Start()
     {
         screwSetup = GetComponentInChildren<ScrewSetup>();
@@ -44,7 +45,7 @@ public class ScrewController : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (GameManager.Instance.InputLocked) return;
+        if (GameManager.Instance.InputLocked || !IsInterable) return;
         animator?.SetTrigger("isClicked");
         StartCoroutine(PlayBounceThenMove());
     }

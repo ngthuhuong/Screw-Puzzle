@@ -15,6 +15,7 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
     [Header("Backup Holes (dự phòng khi Box đầy)")]
     public List<Transform> backupItems;
 
+    
     private void OnEnable()
     {
         this.MMEventStartListening<ReleaseScrew>();
@@ -30,6 +31,7 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
     public void OnMMEvent(ReleaseScrew e)
     {
         ScrewController screw = e.screwController;
+        screw.IsInterable = false;
         ScrewColor color = screw.GetColor();
 
         Debug.Log($"[StorageController] Nhận sự kiện tháo vít: {screw.name} ({color})");
@@ -56,6 +58,24 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
             }
         }
     }
+    private void Start()
+    {
+        InitializeBoxes();
+    }
+
+    private void InitializeBoxes()
+    {
+        if (box1 != null)
+        {
+            box1.SetColor(boxLoader.GetNextColor());
+        }
+
+        if (box2 != null)
+        {
+            box2.SetColor(boxLoader.GetNextColor());
+        }
+    }
+
 
     private Transform GetAvailableBackupSlot()
     {

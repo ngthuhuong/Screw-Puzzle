@@ -8,6 +8,7 @@ public class GameManager : MMSingleton<GameManager>
     public bool InputLocked { get; private set; }
     public GameState CurrentState { get; private set; } = GameState.MainMenu;
     [SerializeField] private GameObject gameplayRoot;
+    [SerializeField] public ScrewColorPresets palletColor;
     public void LockInput()
     {
         InputLocked = true;

@@ -110,6 +110,20 @@ private void BuildLevel()
     }
     // Dòng Debug.Log hiện tại đã có thể truy cập các biến kích thước
     Debug.Log($"Level Built Successfully with dimensions {dimX}x{dimY}x{dimZ} layers.");
+    // ===========================================
+// 4. CANH GIỮA BUILD CONTAINER VỀ TÂM (0,0,0)
+// ===========================================
+    Vector3 centerOffset = new Vector3(
+        (dimX - 1) * cubeSize * 0.5f,
+        (dimY - 1) * cubeSize * 0.5f,
+        (dimZ - 1) * cubeSize * 0.5f
+    );
+
+// Đưa buildContainer về tâm
+    buildContainer.transform.localPosition = -centerOffset;
+
+    Debug.Log("Level Centered at " + buildContainer.transform.localPosition);
+
 }
 
     // Hàm này dọn dẹp tất cả các khối đã sinh ra trước đó

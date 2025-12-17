@@ -36,5 +36,17 @@ public class LoadBoxes : MonoBehaviour
 
         return newBox;
     }
+    public ScrewColor GetNextColor()
+    {
+        if (levelData == null || levelData.boxColors == null || levelData.boxColors.Count == 0)
+        {
+            Debug.LogWarning("[LoadBoxes] LevelData chưa có danh sách màu!");
+            return default;
+        }
+
+        ScrewColor nextColor = levelData.boxColors[currentColorIndex];
+        currentColorIndex = (currentColorIndex + 1) % levelData.boxColors.Count;
+        return nextColor;
+    }
 
 }

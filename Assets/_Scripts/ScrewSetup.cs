@@ -19,6 +19,7 @@ public class ScrewSetup : MonoBehaviour
 
     void Awake()
     {
+        
         // Khởi tạo các tham chiếu cần thiết khi game bắt đầu
         if(screwTransform == null)
         {
@@ -31,14 +32,14 @@ public class ScrewSetup : MonoBehaviour
         // Tìm ScrewController trên đối tượng Cha
         screwController = GetComponentInParent<ScrewController>();
 
-        if (rotationPresets != null && colorPresets != null)
+       /* if (rotationPresets != null && colorPresets != null)
         {
             ApplyTransform();
-        }
+        }*/
     }
     
     // Chạy khi thay đổi Inspector (Editor Mode)
-    private void OnValidate()
+    /*private void OnValidate()
     {
         if (Application.isPlaying) return; 
 
@@ -60,7 +61,7 @@ public class ScrewSetup : MonoBehaviour
         {
             ApplyTransform();
         }
-    }
+    }*/
 
     private void ApplyTransform()
     {
@@ -68,25 +69,24 @@ public class ScrewSetup : MonoBehaviour
         if (rotationPresets != null && screwTransform != null)
         {
             NamedRotation presetData = rotationPresets.GetPresetData(presetName);
-            
             // Áp dụng Rotation
             screwTransform.localRotation = Quaternion.Euler(presetData.RotationEuler);
-            
             // Áp dụng Position Offset
             screwTransform.localPosition = presetData.PositionOffset;
         }
         
-        // 2. Áp dụng Màu sắc
+    }
+    public void ApplyColor(ScrewColor color)
+    {
+        screwColor = color;
         if (colorPresets != null && screwRenderer != null)
         {
-            Material targetMaterial = colorPresets.GetMaterial(screwColor);
+            Material targetMaterial = colorPresets.GetMaterial(color);
             if (targetMaterial != null)
             {
-                // Sử dụng .material để tạo Instance và thay đổi màu trong Runtime
                 screwRenderer.material = targetMaterial; 
             }
         }
-        
-        
     }
+
 }
