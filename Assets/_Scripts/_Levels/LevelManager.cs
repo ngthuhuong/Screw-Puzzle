@@ -67,6 +67,9 @@ public class LevelManager : MMSingleton<LevelManager>
 
         // 4. Build
         builder.Build(currentLevel);
+        MMEventManager.TriggerEvent(
+            new LevelSolutionReadyEvent(currentLevel.solutionColors)
+        );
     }
 
     private void ClearCurrentLevel()

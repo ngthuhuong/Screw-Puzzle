@@ -22,7 +22,7 @@
                 "screws": [
                   {
                     "direction": 3,
-                    "color": 0
+                    "color": 2
                   }
                 ]
               },
@@ -30,7 +30,7 @@
                 "screws": [
                   {
                     "direction": 3,
-                    "color": 3
+                    "color": 1
                   }
                 ]
               },

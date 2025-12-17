@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public struct ReleaseScrew
@@ -35,3 +36,12 @@ public struct DataChange
     
 }
 
+public struct LevelSolutionReadyEvent
+{
+    public List<ScrewColor> solutionColors;
+
+    public LevelSolutionReadyEvent(List<ScrewColor> colors)
+    {
+        solutionColors = colors;
+    }
+}

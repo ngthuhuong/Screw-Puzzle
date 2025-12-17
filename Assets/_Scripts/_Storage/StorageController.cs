@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Tools;
 
-public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MMEventListener<BoxFull>
+public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MMEventListener<BoxFull>,MMEventListener<LevelSolutionReadyEvent>
 {
     [Header("Box Loader")]
     public LoadBoxes boxLoader;
@@ -20,11 +20,14 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
     {
         this.MMEventStartListening<ReleaseScrew>();
         this.MMEventStartListening<BoxFull>();
+        this.MMEventStartListening<LevelSolutionReadyEvent>();
+
     } 
     private void OnDisable()
     {
         this.MMEventStopListening<ReleaseScrew>();
         this.MMEventStopListening<BoxFull>();
+        this.MMEventStopListening<LevelSolutionReadyEvent>();
     }
 
 
@@ -58,11 +61,19 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
             }
         }
     }
-    private void Start()
+    public void OnMMEvent(LevelSolutionReadyEvent e)
     {
+        if (boxLoader == null)
+        {
+            Debug.LogError("[StorageController] boxLoader null");
+            return;
+        }
+
+        boxLoader.SetSolution(e.solutionColors);
+
         InitializeBoxes();
     }
-
+    
     private void InitializeBoxes()
     {
         if (box1 != null)
@@ -175,4 +186,5 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
         }
     }
 
+    
 }

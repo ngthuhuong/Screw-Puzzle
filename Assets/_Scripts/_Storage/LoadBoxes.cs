@@ -1,28 +1,24 @@
+using System.Collections.Generic;
+using MoreMountains.Tools;
 using UnityEngine;
 
-public class LoadBoxes : MonoBehaviour
+public class LoadBoxes : MonoBehaviour,MMEventListener<LevelSolutionReadyEvent>
 {
     [Header("Prefab box")]
     public StorageBox boxPrefab;
-
-    [Header("Dữ liệu Level hiện tại")]
-    public LevelData levelData;
-
+    public List<ScrewColor> boxColors;
     private int currentColorIndex = 0;
     private StorageBox currentBox;
-
-    /// <summary>
-    /// Tạo box mới tại vị trí thay thế (xuất hiện trên đó 1f)
-    /// </summary>
+    
     public StorageBox LoadNextBox(Vector3 replacePosition, Quaternion replaceRotation)
     {
-        if (levelData == null || levelData.boxColors == null || levelData.boxColors.Count == 0)
+        if (boxColors == null || boxColors.Count == 0)
         {
             Debug.LogWarning("[LoadBoxes] LevelData chưa có danh sách màu!");
             return null;
         }
 
-        ScrewColor nextColor = levelData.boxColors[currentColorIndex];
+        ScrewColor nextColor = boxColors[currentColorIndex];
         Vector3 spawnPos = replacePosition + Vector3.up * 5f;
         StorageBox newBox = Instantiate(boxPrefab, spawnPos, replaceRotation, transform);
         newBox.name = $"StorageBox_{nextColor}";
@@ -30,7 +26,7 @@ public class LoadBoxes : MonoBehaviour
 
         newBox.StartCoroutine(newBox.MoveDownTo(replacePosition));
 
-        currentColorIndex = (currentColorIndex + 1) % levelData.boxColors.Count;
+        currentColorIndex = (currentColorIndex + 1) % boxColors.Count;
 
         Debug.Log($"[LoadBoxes] Sinh box mới: {newBox.name} (màu {nextColor}) tại {replacePosition}");
 
@@ -38,15 +34,35 @@ public class LoadBoxes : MonoBehaviour
     }
     public ScrewColor GetNextColor()
     {
-        if (levelData == null || levelData.boxColors == null || levelData.boxColors.Count == 0)
+        if ( boxColors == null || boxColors.Count == 0)
         {
             Debug.LogWarning("[LoadBoxes] LevelData chưa có danh sách màu!");
             return default;
         }
 
-        ScrewColor nextColor = levelData.boxColors[currentColorIndex];
-        currentColorIndex = (currentColorIndex + 1) % levelData.boxColors.Count;
+        ScrewColor nextColor = boxColors[currentColorIndex];
+        currentColorIndex = (currentColorIndex + 1) % boxColors.Count;
         return nextColor;
     }
 
+    public void OnMMEvent(LevelSolutionReadyEvent e)
+    {
+        boxColors = e.solutionColors;
+        currentColorIndex = 0;
+    }
+    public void SetSolution(List<ScrewColor> solution)
+    {
+        boxColors = solution;
+        currentColorIndex = 0;
+    }
+
+    private void OnEnable()
+    {
+        this.MMEventStartListening<LevelSolutionReadyEvent>();
+    }
+
+    private void OnDisable()
+    {
+        this.MMEventStopListening<LevelSolutionReadyEvent>();
+    }
 }
