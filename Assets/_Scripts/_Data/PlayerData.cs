@@ -6,29 +6,35 @@ public class PlayerData
 {
     public int coin;
     public int lives;
+    private int currentLevelIndex;
 
     public int Coin => coin;
     public int Lives => lives;
+    public int CurrentLevelIndex => currentLevelIndex;
     
     private const string COIN_KEY = "player_coin";
     private const string LIVES_KEY = "player_lives";
+    private const string CURRENT_LEVEL_KEY = "current_level";
 
     public void Load()
     {
         coin = PlayerPrefs.GetInt(COIN_KEY, 0);
         lives = PlayerPrefs.GetInt(LIVES_KEY, 3); // mặc định 3 mạng
+        currentLevelIndex = PlayerPrefs.GetInt(CURRENT_LEVEL_KEY, 0);
     }
 
     public void Save()
     {
         PlayerPrefs.SetInt(COIN_KEY, coin);
         PlayerPrefs.SetInt(LIVES_KEY, lives);
+        PlayerPrefs.SetInt(CURRENT_LEVEL_KEY, currentLevelIndex);
         PlayerPrefs.Save();
     }
     public void LoadDefaults()
     {
         coin = 0;
         lives = 3;
+        currentLevelIndex = 0;
         Save();
     }
   

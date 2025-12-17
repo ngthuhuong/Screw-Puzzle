@@ -49,4 +49,4 @@ MonoBehaviour:
       - screws:
         - direction: 2
           color: 3
-  boxColors: 
+  boxColors: 030000000100000000000000

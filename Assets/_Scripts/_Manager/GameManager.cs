@@ -55,6 +55,7 @@ public class GameManager : MMSingleton<GameManager>
                 break;
             case GameState.Playing:
                 GUIManager.Instance.ShowInGameUI();
+                LevelManager.Instance.StartLevel(DataManager.Instance.PlayerData.CurrentLevelIndex);
                 gameplayRoot.SetActive(true);
                 UnlockInput();
                 DataManager.Instance.PlayerData.LoseLife();

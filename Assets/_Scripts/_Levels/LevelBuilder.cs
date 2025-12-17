@@ -1,141 +1,147 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-// Đảm bảo bạn có thư mục 'Editor' để chứa các thư viện UnityEditor
-#if UNITY_EDITOR 
-using UnityEditor; 
+#if UNITY_EDITOR
+using UnityEditor;
 #endif
 
 public class LevelBuilder : MonoBehaviour
 {
     public float cubeSize = 2.47f;
-    
-    public LevelData levelData; 
-    
+
+    [Header("Runtime Config")]
+    [SerializeField] private GameObject plankModulePrefab;
+
     private const string BuildContainerName = "--- GENERATED CUBES ---";
 
-    [ContextMenu("BUILD_LEVEL_IN_EDITOR")]
-    // Sửa lại đoạn code trong hàm BuildLevel() của LevelBuilder
-private void BuildLevel()
-{
-    int dimX = 0;
-    int dimY = 0;
-    int dimZ = 0;
+    private Transform buildContainer;
 
-    if (levelData == null || levelData.levelLayers == null || levelData.plankModule == null)
+    // ================================
+    // RUNTIME BUILD ENTRY POINT
+    // ================================
+    public void Build(LevelRuntimeData runtimeData)
     {
-        Debug.LogError("Cần gán Level Data và đảm bảo Level Layers không rỗng, và Plank Module phải được gán.");
-        return;
-    }
-    
-    CleanupPreviousBuild();
-
-    GameObject buildContainer = new GameObject(BuildContainerName);
-    buildContainer.transform.SetParent(this.transform);
-    
-    // Lấy dữ liệu và prefab
-    List<Layer> matrix = levelData.levelLayers;
-    GameObject baseModulePrefab = levelData.plankModule; // Chỉ là 1 GameObject
-
-    // Tính kích thước Z
-    dimZ = matrix.Count; 
-
-    // DUYỆT VÀ SINH CUBES (Duyệt cấu trúc List lồng nhau)
-    for (int z = 0; z < dimZ; z++) // Lớp Z (Depth)
-    {
-        List<Row> rows = matrix[z].rows;
-        int currentDimY = rows.Count; // Kích thước Y của lớp hiện tại
-        if (z == 0) dimY = currentDimY; // Lưu kích thước Y từ lớp đầu tiên
-
-        for (int y = 0; y < currentDimY; y++) // Lớp Y (Height)
+        if (runtimeData == null || runtimeData.levelLayers == null)
         {
-            // Thay đổi: columns bây giờ là List<CubeBlock>
-            List<CubeBlock> columns = rows[y].columns; 
-            int currentDimX = columns.Count; // Kích thước X của hàng hiện tại
-            if (z == 0 && y == 0) dimX = currentDimX; // Lưu kích thước X từ hàng đầu tiên
+            Debug.LogError("RuntimeData hoặc levelLayers rỗng.");
+            return;
+        }
 
-            for (int x = 0; x < currentDimX; x++) // Cột X (Width)
+        if (plankModulePrefab == null)
+        {
+            Debug.LogError("Chưa gán plankModulePrefab.");
+            return;
+        }
+
+        CleanupPreviousBuild();
+
+        buildContainer = new GameObject(BuildContainerName).transform;
+        buildContainer.SetParent(transform);
+
+        BuildInternal(runtimeData.levelLayers);
+    }
+
+    // ================================
+    // CORE BUILD LOGIC (GIỮ NGUYÊN LOGIC CŨ)
+    // ================================
+    private void BuildInternal(List<Layer> matrix)
+    {
+        int dimX = 0, dimY = 0, dimZ = matrix.Count;
+
+        for (int z = 0; z < dimZ; z++)
+        {
+            List<Row> rows = matrix[z].rows;
+            int currentDimY = rows.Count;
+            if (z == 0) dimY = currentDimY;
+
+            for (int y = 0; y < currentDimY; y++)
             {
-                // Thay đổi: Lấy thông tin khối tại vị trí (x, y, z)
-                CubeBlock currentBlock = columns[x];
-                
-                // Điều kiện sinh khối mới: Nếu danh sách vít rỗng/null, thì coi như là khối trống
-                if (currentBlock.screws == null || currentBlock.screws.Count == 0) continue; 
-                
-                // Khối cơ bản luôn là plankModule
-                GameObject prefabToSpawn = baseModulePrefab; 
+                List<CubeBlock> columns = rows[y].columns;
+                int currentDimX = columns.Count;
+                if (z == 0 && y == 0) dimX = currentDimX;
 
-                // 1. Tính toán vị trí
-                float xPos = x * cubeSize;
-                float yPos = y * cubeSize;
-                float zPos = z * cubeSize;
-                Vector3 spawnPosition = new Vector3(xPos, yPos, zPos);
+                for (int x = 0; x < currentDimX; x++)
+                {
+                    CubeBlock currentBlock = columns[x];
 
-                GameObject cubeInstance = null;
-                
-                // 2. Sinh khối
+                    if (currentBlock.screws == null || currentBlock.screws.Count == 0)
+                        continue;
+
+                    Vector3 spawnPosition = new Vector3(
+                        x * cubeSize,
+                        y * cubeSize,
+                        z * cubeSize
+                    );
+
+                    GameObject cubeInstance;
+
 #if UNITY_EDITOR
-                cubeInstance = (GameObject)PrefabUtility.InstantiatePrefab(prefabToSpawn, buildContainer.transform);
-                
-                cubeInstance.transform.localPosition = spawnPosition;
-                cubeInstance.name = $"{prefabToSpawn.name}_{x}_{y}_{z}";
-                
-                Undo.RegisterCreatedObjectUndo(cubeInstance, "Create Cube Instance");
+                    cubeInstance = (GameObject)PrefabUtility.InstantiatePrefab(
+                        plankModulePrefab, buildContainer
+                    );
+                    cubeInstance.transform.localPosition = spawnPosition;
+                    Undo.RegisterCreatedObjectUndo(cubeInstance, "Create Cube");
 #else
-                // Nếu không ở Editor, dùng Instantiate thông thường
-                cubeInstance = Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity, buildContainer.transform);
+                    cubeInstance = Instantiate(
+                        plankModulePrefab,
+                        spawnPosition,
+                        Quaternion.identity,
+                        buildContainer
+                    );
 #endif
 
-                // 3. Khởi tạo đối tượng Cube và thiết lập các vít
-                if (cubeInstance != null)
-                {
-                    // Lấy Component CubeController trên khối vừa sinh ra
-                    CubeController controller = cubeInstance.GetComponent<CubeController>(); 
+                    cubeInstance.name = $"{plankModulePrefab.name}_{x}_{y}_{z}";
 
+                    CubeController controller = cubeInstance.GetComponent<CubeController>();
                     if (controller != null)
                     {
-                        // Truyền thông tin vít (bao gồm hướng và màu) cho Controller để nó tự thiết lập
-                        controller.Initialize(currentBlock.screws); 
+                        controller.Initialize(currentBlock.screws);
                     }
                     else
                     {
-                        Debug.LogWarning($"Khối {cubeInstance.name} thiếu CubeController. Không thể thiết lập vít.");
+                        Debug.LogWarning($"{cubeInstance.name} thiếu CubeController.");
                     }
-                    
-                    // (Optional) Khởi tạo đối tượng Cube class để lưu trữ runtime data nếu cần
-                    // Cube cubeData = new Cube(xPos, yPos, zPos, currentBlock.screws.Select(s => (int)s.direction).ToList()); 
                 }
             }
         }
+
+        CenterLevel(dimX, dimY, dimZ);
+
+        Debug.Log($"Level built: {dimX}x{dimY}x{dimZ}");
     }
-    // Dòng Debug.Log hiện tại đã có thể truy cập các biến kích thước
-    Debug.Log($"Level Built Successfully with dimensions {dimX}x{dimY}x{dimZ} layers.");
-    // ===========================================
-// 4. CANH GIỮA BUILD CONTAINER VỀ TÂM (0,0,0)
-// ===========================================
-    Vector3 centerOffset = new Vector3(
-        (dimX - 1) * cubeSize * 0.5f,
-        (dimY - 1) * cubeSize * 0.5f,
-        (dimZ - 1) * cubeSize * 0.5f
-    );
 
-// Đưa buildContainer về tâm
-    buildContainer.transform.localPosition = -centerOffset;
+    // ================================
+    // CENTER LEVEL
+    // ================================
+    private void CenterLevel(int dimX, int dimY, int dimZ)
+    {
+        Vector3 offset = new Vector3(
+            (dimX - 1) * cubeSize * 0.5f,
+            (dimY - 1) * cubeSize * 0.5f,
+            (dimZ - 1) * cubeSize * 0.5f
+        );
 
-    Debug.Log("Level Centered at " + buildContainer.transform.localPosition);
+        buildContainer.localPosition = -offset;
+    }
 
-}
-
-    // Hàm này dọn dẹp tất cả các khối đã sinh ra trước đó
-    private void CleanupPreviousBuild()
+    // ================================
+    // CLEAR
+    // ================================
+    public void CleanupPreviousBuild()
     {
 #if UNITY_EDITOR
-        Transform previousBuild = transform.Find(BuildContainerName);
-        
-        if (previousBuild != null)
+        Transform old = transform.Find(BuildContainerName);
+        if (old != null)
         {
-            Undo.DestroyObjectImmediate(previousBuild.gameObject);
+            Undo.DestroyObjectImmediate(old.gameObject);
+            return;
         }
 #endif
+
+        Transform runtimeOld = transform.Find(BuildContainerName);
+        if (runtimeOld != null)
+        {
+            Destroy(runtimeOld.gameObject);
+        }
     }
 }
