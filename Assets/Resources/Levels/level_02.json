@@ -1,0 +1,81 @@
+{
+  "levelId": 2,
+  "grid": {
+    "layers": [
+      {
+        "rows": [
+          {
+            "columns": [
+              {
+                "screws": [
+                  { "direction": 1, "color": 1 },
+                  { "direction": 3, "color": 2 }
+                ]
+              },
+              {
+                "screws": [
+                  { "direction": 2, "color": 3 }
+                ]
+              },
+              {
+                "screws": [
+                  { "direction": 1, "color": 1 },
+                  { "direction": 5, "color": 2 }
+                ]
+              }
+            ]
+          },
+          {
+            "columns": [
+              {
+                "screws": [
+                  { "direction": 1, "color": 2 }
+                ]
+              },
+              {
+                "screws": [
+                  { "direction": 6, "color": 3 },
+                  { "direction": 2, "color": 1 }
+                ]
+              },
+              {
+                "screws": [
+                  { "direction": 1, "color": 2 }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "rows": [
+          {
+            "columns": [
+              {
+                "screws": [
+                  { "direction": 2, "color": 1 },
+                  { "direction": 5, "color": 2 }
+                ]
+              },
+              {
+                "screws": [
+                  { "direction": 3, "color": 3 },
+                  { "direction": 1, "color": 1 }
+                ]
+              },
+              {
+                "screws": [
+                  { "direction": 1, "color": 1 },
+                  { "direction": 4, "color": 2 }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "solution": {
+    "colors": [1, 1, 2, 2, 3]
+  }
+}

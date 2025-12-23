@@ -37,8 +37,6 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
         screw.IsInterable = false;
         ScrewColor color = screw.GetColor();
 
-        Debug.Log($"[StorageController] Nhận sự kiện tháo vít: {screw.name} ({color})");
-
         bool stored = false;
 
         if (box1.HasSlot() && box1.CompareColor(color))
@@ -68,7 +66,7 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
             Debug.LogError("[StorageController] boxLoader null");
             return;
         }
-
+        ResetStorage();
         boxLoader.SetSolution(e.solutionColors);
 
         InitializeBoxes();
@@ -131,25 +129,31 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
 
     public void OnMMEvent(BoxFull e)
     {
-       // StorageBox fullBox = e.box;
         StartCoroutine(HandleReplaceBox(e.box));
     }
 
     private IEnumerator HandleReplaceBox(StorageBox fullBox)
-    {  
-        Vector3 replacePos = fullBox.transform.position;
-        Quaternion replaceRot = fullBox.transform.rotation;
-       
-        yield return StartCoroutine(fullBox.MoveUpAndDisable()); //doi hop cu di chuyen len 
- 
-        StorageBox newBox = boxLoader.LoadNextBox(replacePos, replaceRot);
-        if (fullBox == box1) box1 = newBox;
-        else if (fullBox == box2) box2 = newBox;
-        yield return new WaitForSeconds(0.5f);
+    {
+        yield return StartCoroutine(fullBox.MoveUp());
 
-        // ✅ Sau đó kiểm tra backup
-        TryFillFromBackup(newBox);
+        if (!boxLoader.HasNextBox())
+        {
+            fullBox.ClearData();
+            fullBox.SetInactive(); // box trống, không màu
+            yield break;
+        }
+
+        ScrewColor nextColor = boxLoader.GetNextColor();
+
+        fullBox.ClearData();
+        fullBox.SetColor(nextColor);
+        fullBox.MoveDownToOrigin();
+
+        yield return new WaitForSeconds(0.3f);
+        TryFillFromBackup(fullBox);
     }
+
+
     
     public void TryFillFromBackup(StorageBox targetBox)
     {
@@ -186,5 +190,28 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
         }
     }
 
-    
+    public void ResetStorage()
+    {
+        ResetBox(box1);
+        ResetBox(box2);
+
+        foreach (Transform backup in backupItems)
+        {
+            for (int i = backup.childCount - 1; i >= 0; i--)
+            {
+                Destroy(backup.GetChild(i).gameObject);
+            }
+        }
+    }
+
+    private void ResetBox(StorageBox box)
+    {
+        if (box == null) return;
+
+        box.ClearData();
+        box.MoveDownToOrigin();
+        box.SetInactive(); // inactive logic, KHÔNG disable GameObject
+    }
+
+
 }

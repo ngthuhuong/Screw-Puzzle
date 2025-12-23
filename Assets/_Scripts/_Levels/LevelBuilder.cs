@@ -40,10 +40,7 @@ public class LevelBuilder : MonoBehaviour
 
         BuildInternal(runtimeData.levelLayers);
     }
-
-    // ================================
-    // CORE BUILD LOGIC (GIỮ NGUYÊN LOGIC CŨ)
-    // ================================
+    
     private void BuildInternal(List<Layer> matrix)
     {
         int dimX = 0, dimY = 0, dimZ = matrix.Count;
@@ -121,19 +118,34 @@ cubeInstance = Instantiate(
         Debug.Log($"Level built: {dimX}x{dimY}x{dimZ}");
     }
 
-    // ================================
-    // CENTER LEVEL
-    // ================================
+ 
     private void CenterLevel(int dimX, int dimY, int dimZ)
     {
-        Vector3 offset = new Vector3(
-            (dimX - 1) * cubeSize * 0.5f,
-            (dimY - 1) * cubeSize * 0.5f,
-            (dimZ - 1) * cubeSize * 0.5f
-        );
+        if (buildContainer == null) return;
 
-        buildContainer.localPosition = -offset;
+        Renderer[] renderers = buildContainer.GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0) return;
+
+        Bounds bounds = renderers[0].bounds;
+        for (int i = 1; i < renderers.Length; i++)
+        {
+            bounds.Encapsulate(renderers[i].bounds);
+        }
+
+        // Tâm hiện tại của mô hình (world)
+        Vector3 modelCenterWorld = bounds.center;
+
+        // Tâm mong muốn (world) = vị trí GameObject chứa LevelBuilder
+        Vector3 targetCenterWorld = transform.position;
+
+        // Độ lệch cần dịch
+        Vector3 delta = targetCenterWorld - modelCenterWorld;
+
+        // Dịch container
+        buildContainer.position += delta;
     }
+
+
 
     // ================================
     // CLEAR

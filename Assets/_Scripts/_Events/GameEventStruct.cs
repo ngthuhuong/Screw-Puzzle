@@ -10,6 +10,12 @@ public struct ReleaseScrew
         screwController = s;
     }
 }
+public struct CubeCleared
+{
+    public CubeController cube;
+    public CubeCleared(CubeController c) => cube = c;
+}
+
 public struct BoxFull
 {
     public StorageBox box;
@@ -44,4 +50,9 @@ public struct LevelSolutionReadyEvent
     {
         solutionColors = colors;
     }
+}
+
+public struct WinGameEvent
+{
+    
 }

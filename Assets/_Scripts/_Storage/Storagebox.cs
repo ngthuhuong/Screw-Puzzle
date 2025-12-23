@@ -9,20 +9,22 @@ public class StorageBox : MonoBehaviour
     public ScrewColor acceptedColor;
     public List<Transform> screwSlots;
     
-    public float approachDistance = 2f;
-    public float moveSpeed = 3f;
+    private float approachDistance = 2f;
+    private float moveSpeed = 3f;
     
     public MeshRenderer meshRenderer;
     private ScrewColorPresets colorPresets  ;
     
-    public float moveUpDistance = 2.5f;   // khoảng di chuyển lên trên
-    public float moveDownDistance = 2.5f; // khoảng di chuyển xuống
-    public float transitionSpeed = 2f;
+    private float moveUpDistance = 10f;
+    private float transitionSpeed = 2f;
+    public bool IsActive { get; private set; }
+    private Vector3 originPos;
+
 
     void Awake() 
     {
         meshRenderer = GetComponentInChildren<MeshRenderer>(true); 
-        
+        originPos = transform.position;
         if (GameManager.Instance != null)
         {
             colorPresets = GameManager.Instance.palletColor;
@@ -35,33 +37,40 @@ public class StorageBox : MonoBehaviour
 
     public void SetColor(ScrewColor color)
     {
-        acceptedColor = color; // Cập nhật luôn màu được chấp nhận
-        Debug.Log($"[StorageBox - SetColor] Đang cố gắng set màu cho Box {name} thành: {color}");
+        acceptedColor = color;
+        IsActive = color != ScrewColor.Gray;
+
         if (meshRenderer != null && colorPresets != null)
         {
-            Material mat = colorPresets.GetMaterial(color);
-            if (mat != null)
+            meshRenderer.material = colorPresets.GetMaterial(color);
+        }
+    }
+    public void SetInactive()
+    {
+        SetColor(ScrewColor.Gray);
+    }
+    public void ClearData()
+    {
+        foreach (Transform slot in screwSlots)
+        {
+            if (slot.childCount > 0)
             {
-                meshRenderer.material = mat;
+                Destroy(slot.GetChild(0).gameObject);
             }
         }
-        else
-        {
-            Debug.LogWarning($"[StorageBox] Thiếu meshRenderer hoặc colorPresets cho {name}");
-        }
     }
-
-    public void DisableBox()
-    {
-        // Ẩn box hoặc di chuyển đi chỗ khác
-        gameObject.SetActive(false);
-    }
+    
     public bool CompareColor(ScrewColor color)
     {
+        if (!IsActive) return false;
         return color == acceptedColor;
     }
 
-    public bool HasSlot() => screwSlots.Exists(s => s.childCount == 0);
+    public bool HasSlot()
+    {
+        if (!IsActive) return false;
+        return screwSlots.Exists(s => s.childCount == 0);
+    }
 
 
 
@@ -132,25 +141,29 @@ public class StorageBox : MonoBehaviour
             yield return null;
         }
     }
-    public IEnumerator MoveUpAndDisable()
+    public IEnumerator MoveUp()
     {
         Vector3 start = transform.position;
         Vector3 target = start + Vector3.up * moveUpDistance;
-        float t = 0;
+        float t = 0f;
+
         while (t < 1f)
         {
             t += Time.deltaTime * transitionSpeed;
             transform.position = Vector3.Lerp(start, target, t);
             yield return null;
         }
-        DisableBox(); // Ẩn hộp sau khi ra khỏi khung nhìn
+    }
+    public void MoveDownToOrigin()
+    {
+        StartCoroutine(MoveDown(originPos));
     }
 
-    // 📦 Khi hộp mới spawn, di chuyển xuống vị trí ban đầu
-    public IEnumerator MoveDownTo(Vector3 targetPos)
+    private IEnumerator MoveDown(Vector3 targetPos)
     {
         Vector3 start = transform.position;
-        float t = 0;
+        float t = 0f;
+
         while (t < 1f)
         {
             t += Time.deltaTime * transitionSpeed;
@@ -158,4 +171,5 @@ public class StorageBox : MonoBehaviour
             yield return null;
         }
     }
+
 }

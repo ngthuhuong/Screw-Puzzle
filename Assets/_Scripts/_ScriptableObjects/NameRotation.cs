@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-// Đặt tên file là ScrewFace.cs
+
 public enum ScrewFace
 {
     Top=1,
@@ -10,13 +10,11 @@ public enum ScrewFace
     Right=5,
     Left=6,
     None=0
-    // Có thể thêm các hướng chéo nếu cần
 }
-// Đảm bảo struct này hiển thị trong Inspector
 [Serializable]
 public struct NamedRotation
 {
-    public ScrewFace Name; // Ví dụ: "Top", "Right", "Front"
-    public Vector3 RotationEuler; // Giá trị Euler (x, y, z)
+    public ScrewFace Name;
+    public Vector3 RotationEuler;
     public Vector3 PositionOffset; // Giá trị Offset (x, y, z)
 }

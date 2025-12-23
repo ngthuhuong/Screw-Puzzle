@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using MoreMountains.Tools;
 using UnityEngine;
 
 public class CubeController : MonoBehaviour
 {
     private List<ScrewController> activeScrews; // Danh sách các vít đang hoạt động
+    
     private Rigidbody rb;
     private bool isReleased = false; 
     private bool isFading = false;
@@ -29,7 +31,6 @@ public class CubeController : MonoBehaviour
         ScrewController[] childScrews = GetComponentsInChildren<ScrewController>();
         activeScrews = new List<ScrewController>(childScrews);
 
-        Debug.Log($"{gameObject.name} được giữ bởi: {activeScrews.Count} vít.");
     }
 
     public void ScrewRemoved(ScrewController removedScrew)
@@ -37,19 +38,18 @@ public class CubeController : MonoBehaviour
         if (activeScrews.Contains(removedScrew))
         {
             activeScrews.Remove(removedScrew);
-            Debug.Log($"{gameObject.name}: Vít đã tháo. Còn lại {activeScrews.Count} vít.");
         }
 
         if (activeScrews.Count == 0 && !isReleased)
         {
             isReleased = true;
+            MMEventManager.TriggerEvent(new CubeCleared(this));
             ReleasePlank();
         }
     }
 
     private void ReleasePlank()
     {
-        Debug.Log($"{gameObject.name}: Tất cả vít đã tháo! Bắt đầu rơi tự do.");
         rb.isKinematic = false;
         transform.SetParent(null);
     }
@@ -59,7 +59,6 @@ public class CubeController : MonoBehaviour
         // 🧠 Nếu đã được thả và rơi ra ngoài màn hình -> huỷ
         if (isReleased && !IsVisibleFrom(Camera.main))
         {
-            Debug.Log($"{gameObject.name}: Rơi khỏi màn hình -> Hủy.");
             Destroy(gameObject);
         }
         // Kiểm tra nhấn giữ chuột phải

@@ -20,7 +20,7 @@ public class PlayerData
     {
         coin = PlayerPrefs.GetInt(COIN_KEY, 0);
         lives = PlayerPrefs.GetInt(LIVES_KEY, 3); // mặc định 3 mạng
-        currentLevelIndex = PlayerPrefs.GetInt(CURRENT_LEVEL_KEY, 0);
+        currentLevelIndex = PlayerPrefs.GetInt(CURRENT_LEVEL_KEY, 1);
     }
 
     public void Save()
@@ -34,7 +34,7 @@ public class PlayerData
     {
         coin = 0;
         lives = 3;
-        currentLevelIndex = 0;
+        currentLevelIndex = 1;
         Save();
     }
   
@@ -63,12 +63,17 @@ public class PlayerData
         Debug.Log("-1 mang");
         Save();
         MMEventManager.TriggerEvent(new DataChange());
-
     }
 
     public void ResetLives(int newLives = 3)
     {
         lives = newLives;
+        Save();
+    }
+
+    public void SetNextLevel()
+    {
+        currentLevelIndex++;
         Save();
     }
 }

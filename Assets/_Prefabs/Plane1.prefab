@@ -235,15 +235,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12415a6c08347f648830924adba63d2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceptedColor: 3
+  acceptedColor: 2
   screwSlots:
   - {fileID: 9172293612471085111}
   - {fileID: 3720343865257699995}
   - {fileID: 710180090727193429}
   approachDistance: 2
   moveSpeed: 3
+  meshRenderer: {fileID: 0}
   moveUpDistance: 2.5
-  moveDownDistance: 2.5
   transitionSpeed: 2
 --- !u!1 &3607914089433218823
 GameObject:

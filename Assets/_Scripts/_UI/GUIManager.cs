@@ -3,7 +3,7 @@ using MoreMountains.Tools;
 using UnityEngine;
 
 public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEventListener<Confirm>,
-    MMEventListener<DataChange>
+    MMEventListener<DataChange>,MMEventListener<WinGameEvent>
 {
     [SerializeField] private GUIMenuController mainMenu;
     [SerializeField] private UIGameplayController inGameUI;
@@ -17,10 +17,7 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
         if(popupUI == null) popupUI = GetComponentInChildren<PopupController>();
         if(marketingPanel == null) marketingPanel = GetComponentInChildren<MarketingPanel>();
         mainMenu.Show();
-        inGameUI.Hide();
-      //
-      //  mainMenu.Hide();
-       // inGameUI.Show();
+     
         popupUI.Hide();
         marketingPanel.Hide();
     }
@@ -30,6 +27,7 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
         this.MMEventStartListening<LoseGame>();
         this.MMEventStartListening<Confirm>();
         this.MMEventStartListening<DataChange>();
+        this.MMEventStartListening<WinGameEvent>();
 
     }
     private void OnDisable()
@@ -37,6 +35,7 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
         this.MMEventStopListening<LoseGame>();
         this.MMEventStopListening<Confirm>();
         this.MMEventStopListening<DataChange>();
+        this.MMEventStopListening<WinGameEvent>();
     }
 
     //play game
@@ -68,6 +67,14 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
     {
         popupUI.EnableConfirmGroup("Xem quảng cáo để chơi  tiếp ?","RetryLevel");
     }
+    public void OnNextLevelClicked()
+    {
+        popupUI.Hide();
+        DataManager.Instance.PlayerData.SetNextLevel();
+        GameManager.Instance.StartGame();
+        inGameUI.UpdateLevelText();
+    }
+
     public void OnMMEvent(LoseGame eventType)
     {
         popupUI.EnableLoseGroup(true);
@@ -108,5 +115,10 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
     public void ShowMarketingPanel()
     {
         marketingPanel.Show();
+    }
+
+    public void OnMMEvent(WinGameEvent eventType)
+    {
+        popupUI.EnableWinGroup(true);
     }
 }

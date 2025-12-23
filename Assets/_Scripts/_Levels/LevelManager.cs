@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
 
-public class LevelManager : MMSingleton<LevelManager>
+public class LevelManager : MMSingleton<LevelManager>,MMEventListener<CubeCleared>
 {
     [Header("Builder")]
     public LevelBuilder builder;
@@ -13,6 +13,9 @@ public class LevelManager : MMSingleton<LevelManager>
 
     private int currentLevelIndex;
     private LevelRuntimeData currentLevel;
+    private int totalCubes;
+    private int clearedCubes;
+
 
     // ======================
     // PUBLIC API
@@ -36,10 +39,6 @@ public class LevelManager : MMSingleton<LevelManager>
             ? currentLevel.solutionColors
             : null;
     }
-
-    // ======================
-    // INTERNAL
-    // ======================
 
     private void LoadLevel(int levelIndex)
     {
@@ -70,6 +69,7 @@ public class LevelManager : MMSingleton<LevelManager>
         MMEventManager.TriggerEvent(
             new LevelSolutionReadyEvent(currentLevel.solutionColors)
         );
+        RegisterCubes();
     }
 
     private void ClearCurrentLevel()
@@ -81,4 +81,37 @@ public class LevelManager : MMSingleton<LevelManager>
 
         currentLevel = null;
     }
+    private void RegisterCubes()
+    {
+        var cubes = Object.FindObjectsByType<CubeController>(
+            FindObjectsSortMode.None
+        );
+        totalCubes = cubes.Length;
+        clearedCubes = 0;
+    }
+
+    public void OnMMEvent(CubeCleared eventType)
+    {
+        clearedCubes++;
+        if (clearedCubes >= totalCubes)
+        {
+            WinLevel();
+        }
+    }
+    protected void OnEnable()
+    {
+        this.MMEventStartListening<CubeCleared>();
+    }
+
+    protected void OnDisable()
+    {
+        this.MMEventStopListening<CubeCleared>();
+    }
+    private void WinLevel()
+    {
+        Debug.Log("WIN LEVEL" + currentLevelIndex);
+        MMEventManager.TriggerEvent(new WinGameEvent());
+        
+    }
+
 }
