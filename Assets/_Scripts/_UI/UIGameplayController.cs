@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;   
 
-public class UIGameplayController : GUIBase,MMEventListener<ReleaseScrew>
+public class UIGameplayController : GUIBase,MMEventListener<ReleaseScrew>,MMEventListener<DataChange>
 {
     [SerializeField] public TextMeshProUGUI playerCoinText;
     [SerializeField] public TextMeshProUGUI screwCountText;
@@ -14,11 +14,13 @@ public class UIGameplayController : GUIBase,MMEventListener<ReleaseScrew>
     private void OnEnable()
     {
         this.MMEventStartListening<ReleaseScrew>();
+        this.MMEventStartListening<DataChange>();
     }
 
     private void OnDestroy()
     {
         this.MMEventStopListening<ReleaseScrew>();
+        this.MMEventStopListening<DataChange>();
     }
 
     void Start()
@@ -32,8 +34,11 @@ public class UIGameplayController : GUIBase,MMEventListener<ReleaseScrew>
     {
         screwCountText.text = DataManager.Instance.SessionData.screwsRemoved.ToString();
     }
-    public void UpdateLevelText()
+ 
+
+    public void OnMMEvent(DataChange eventType)
     {
+        playerCoinText.text = DataManager.Instance.PlayerData.Coin.ToString();
         levelText.text = "Level " + DataManager.Instance.PlayerData.CurrentLevelIndex.ToString();
     }
 }

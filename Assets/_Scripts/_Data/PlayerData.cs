@@ -29,6 +29,7 @@ public class PlayerData
         PlayerPrefs.SetInt(LIVES_KEY, lives);
         PlayerPrefs.SetInt(CURRENT_LEVEL_KEY, currentLevelIndex);
         PlayerPrefs.Save();
+        MMEventManager.TriggerEvent(new DataChange());
     }
     public void LoadDefaults()
     {
@@ -76,4 +77,5 @@ public class PlayerData
         currentLevelIndex++;
         Save();
     }
+  
 }

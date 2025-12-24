@@ -72,7 +72,10 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
         popupUI.Hide();
         DataManager.Instance.PlayerData.SetNextLevel();
         GameManager.Instance.StartGame();
-        inGameUI.UpdateLevelText();
+    }
+    public void OnBackHomeAfterWinClicked()
+    {
+        DataManager.Instance.PlayerData.SetNextLevel();
     }
 
     public void OnMMEvent(LoseGame eventType)

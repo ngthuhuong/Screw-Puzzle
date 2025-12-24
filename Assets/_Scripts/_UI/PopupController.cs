@@ -8,8 +8,10 @@ public class PopupController : GUIBase
     [SerializeField] private GameObject loseGroup;
     [SerializeField] private GameObject confirmGroup;
 
-    [SerializeField] private ConfirmController confirmPanel;
-
+    [SerializeField] 
+    private ConfirmController confirmPanel;
+    public GameObject RewardGroup;
+    public GameObject ClaimButtonGroup;
     private void UnableAllGroups()
     {
         buttonGroup.SetActive(false);
@@ -29,6 +31,12 @@ public class PopupController : GUIBase
     {
         Show();
         UnableAllGroups();
+        RewardManager.Instance.LoadRewardsAsChildren(
+            RewardSource.LevelComplete, 
+            DataManager.Instance.PlayerData.CurrentLevelIndex, 
+            RewardGroup.transform
+            );
+        ClaimButtonGroup.SetActive(enable);
         winGroup.SetActive(enable);
     }
 

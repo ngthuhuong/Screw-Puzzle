@@ -8,7 +8,7 @@ public class DataManager : MMSingleton<DataManager>
 
     protected override void Awake()
     {
-        base.Awake(); 
+        base.Awake();
         LoadPlayerData();
         NewSession();
     }
@@ -41,5 +41,17 @@ public class DataManager : MMSingleton<DataManager>
     protected virtual void OnApplicationQuit()
     {
         SavePlayerData();
+    }
+
+    public void ReceiveAllRewardsWinLevel()
+    {
+        AddCoinReward(RewardSource.LevelComplete, PlayerData.CurrentLevelIndex);
+    }
+
+    public void AddCoinReward(RewardSource source, int level)
+    {
+        int amount = RewardManager.Instance.GetTotalCoin(source, level);
+        if (amount <= 0) return;
+        PlayerData.AddCoin(amount);
     }
 }
