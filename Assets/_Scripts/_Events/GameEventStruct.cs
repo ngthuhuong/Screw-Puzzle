@@ -21,11 +21,11 @@ public struct BoxFull
     public StorageBox box;
     public BoxFull(StorageBox b) { box = b; }
 }
-
+public struct StartGame{} //for reset game 
 public struct LoseGame
 {
-    
 }
+public struct WinGameEvent{ }
 public struct Confirm
 {
     public string tag;
@@ -38,8 +38,6 @@ public struct Confirm
 }
 public struct DataChange
 {
-   
-    
 }
 
 public struct LevelSolutionReadyEvent
@@ -52,7 +50,8 @@ public struct LevelSolutionReadyEvent
     }
 }
 
-public struct WinGameEvent
-{
-    
-}
+
+public struct UseDrillTool{}
+
+public struct UseHammerTool{}
+public struct UseBroomTool{}

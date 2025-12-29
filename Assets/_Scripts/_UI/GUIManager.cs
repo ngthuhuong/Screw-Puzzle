@@ -3,12 +3,13 @@ using MoreMountains.Tools;
 using UnityEngine;
 
 public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEventListener<Confirm>,
-    MMEventListener<DataChange>,MMEventListener<WinGameEvent>
+    MMEventListener<DataChange>,MMEventListener<WinGameEvent>,MMEventListener<UseHammerTool>
 {
     [SerializeField] private GUIMenuController mainMenu;
     [SerializeField] private UIGameplayController inGameUI;
     [SerializeField] private PopupController popupUI;
     [SerializeField] private MarketingPanel marketingPanel;
+    [SerializeField] private AlertUIController alertUI;
     
     void Start()
     {
@@ -16,6 +17,7 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
         if(inGameUI == null) inGameUI = GetComponentInChildren<UIGameplayController>();
         if(popupUI == null) popupUI = GetComponentInChildren<PopupController>();
         if(marketingPanel == null) marketingPanel = GetComponentInChildren<MarketingPanel>();
+        if(alertUI == null) alertUI = GetComponentInChildren<AlertUIController>();
         mainMenu.Show();
      
         popupUI.Hide();
@@ -28,7 +30,7 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
         this.MMEventStartListening<Confirm>();
         this.MMEventStartListening<DataChange>();
         this.MMEventStartListening<WinGameEvent>();
-
+        this.MMEventStartListening<UseHammerTool>();
     }
     private void OnDisable()
     {
@@ -36,6 +38,7 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
         this.MMEventStopListening<Confirm>();
         this.MMEventStopListening<DataChange>();
         this.MMEventStopListening<WinGameEvent>();
+        this.MMEventStopListening<UseHammerTool>();
     }
 
     //play game
@@ -69,6 +72,7 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
     }
     public void OnNextLevelClicked()
     {
+        popupUI.EnableWinGroup(false);
         popupUI.Hide();
         DataManager.Instance.PlayerData.SetNextLevel();
         GameManager.Instance.StartGame();
@@ -123,5 +127,10 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
     public void OnMMEvent(WinGameEvent eventType)
     {
         popupUI.EnableWinGroup(true);
+    }
+
+    public void OnMMEvent(UseHammerTool eventType)
+    {
+        alertUI.Show("Chọn 1 cube để phá hủy!");
     }
 }

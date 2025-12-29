@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Tools;
 
-public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MMEventListener<BoxFull>,MMEventListener<LevelSolutionReadyEvent>
+public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MMEventListener<BoxFull>,MMEventListener<LevelSolutionReadyEvent>,MMEventListener<UseDrillTool>,MMEventListener<StartGame>
 {
     [Header("Box Loader")]
     public LoadBoxes boxLoader;
@@ -14,23 +14,27 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
 
     [Header("Backup Holes (dự phòng khi Box đầy)")]
     public List<Transform> backupItems;
+    private int backupCount = 4;
 
-    
+    #region ON/OF EVENT LISTENERS
     private void OnEnable()
     {
         this.MMEventStartListening<ReleaseScrew>();
         this.MMEventStartListening<BoxFull>();
         this.MMEventStartListening<LevelSolutionReadyEvent>();
-
+        this.MMEventStartListening<UseDrillTool>();
+        this.MMEventStartListening<StartGame>();
     } 
     private void OnDisable()
     {
         this.MMEventStopListening<ReleaseScrew>();
         this.MMEventStopListening<BoxFull>();
         this.MMEventStopListening<LevelSolutionReadyEvent>();
+        this.MMEventStopListening<UseDrillTool>();
+        this.MMEventStopListening<StartGame>();
     }
-
-
+    
+    #endregion
     public void OnMMEvent(ReleaseScrew e)
     {
         ScrewController screw = e.screwController;
@@ -85,6 +89,19 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
         }
     }
 
+#region Backup Slots
+
+public void ResetBackupSlots()
+{
+    if(backupItems.Count > backupCount)
+    {
+        for(int i = backupItems.Count -1; i >= backupCount; i--)
+        {
+            Destroy(backupItems[i].gameObject);
+            backupItems.RemoveAt(i);
+        }
+    }
+}
 
     private Transform GetAvailableBackupSlot()
     {
@@ -126,6 +143,27 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
             if (t.childCount == 0) return false; 
         return true; 
     }
+    public void OnMMEvent(UseDrillTool eventType)
+    {
+        Transform lastHole = backupItems[backupItems.Count - 1];
+
+        Transform newHole = Instantiate(
+            lastHole,
+            lastHole.parent    // giữ chung parent
+        );
+        newHole.localPosition = lastHole.localPosition;
+        float offsetX = 2f;
+        newHole.localPosition += Vector3.right * offsetX;
+        backupItems.Add(newHole);
+    }
+
+    public void OnMMEvent(StartGame eventType)
+    {
+        ResetBackupSlots();
+    }
+#endregion
+
+#region Box Full Event
 
     public void OnMMEvent(BoxFull e)
     {
@@ -212,6 +250,8 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
         box.MoveDownToOrigin();
         box.SetInactive(); // inactive logic, KHÔNG disable GameObject
     }
+
+    #endregion
 
 
 }

@@ -18,6 +18,7 @@ public class DataManager : MMSingleton<DataManager>
     {
         PlayerData = new PlayerData();
         PlayerData.LoadDefaults();
+        //PlayerData.Load();
     }
 
     public void SavePlayerData()
@@ -45,9 +46,23 @@ public class DataManager : MMSingleton<DataManager>
 
     public void ReceiveAllRewardsWinLevel()
     {
-        AddCoinReward(RewardSource.LevelComplete, PlayerData.CurrentLevelIndex);
-    }
+        var rewards = RewardManager.Instance.GetRewards(
+            RewardSource.LevelComplete,
+            PlayerData.CurrentLevelIndex
+        );
 
+        foreach (var rewardData in rewards)
+        {
+            foreach (var reward in rewardData.rewards)
+            {
+                PlayerData.ApplyReward(new ToolData
+                {
+                    type = reward.Key,
+                    amount = reward.Value
+                });
+            }
+        }
+    }
     public void AddCoinReward(RewardSource source, int level)
     {
         int amount = RewardManager.Instance.GetTotalCoin(source, level);

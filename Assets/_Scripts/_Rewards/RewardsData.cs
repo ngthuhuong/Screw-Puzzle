@@ -36,5 +36,5 @@ public class RewardData
 
         rewards[type] += amount;
     }
-
+    
 }

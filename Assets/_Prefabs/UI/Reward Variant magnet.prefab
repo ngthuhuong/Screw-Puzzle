@@ -11,10 +11,18 @@ PrefabInstance:
     - target: {fileID: 261890268294303550, guid: 3d19cc2dcea2236449477314d7e708a0, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 4e64621b26471424b9da1e4cba22128b, type: 3}
+      objectReference: {fileID: 21300000, guid: 3a437828a07af5443973d756c75f5ae6, type: 3}
+    - target: {fileID: 2401840551066973803, guid: 3d19cc2dcea2236449477314d7e708a0, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 2401840551066973803, guid: 3d19cc2dcea2236449477314d7e708a0, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 5668029601407589009, guid: 3d19cc2dcea2236449477314d7e708a0, type: 3}
       propertyPath: m_Name
-      value: Reward Variant 2
+      value: Reward Variant magnet
       objectReference: {fileID: 0}
     - target: {fileID: 6656002621412628271, guid: 3d19cc2dcea2236449477314d7e708a0, type: 3}
       propertyPath: m_Pivot.x

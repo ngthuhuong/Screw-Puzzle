@@ -120,6 +120,17 @@ public class ScrewController : MonoBehaviour
 
         transform.position = targetPos;
     }
+    public void ForceRelease()
+    {
+        if (!isInterable) return;
+        isInterable = false;
+        if (boxCollider != null)
+            boxCollider.enabled = false;
+        MoveForward();
+        if (cube != null)
+            cube.ScrewRemoved(this);
+    }
+
 
     public ScrewColor GetColor() => screwSetup != null ? screwSetup.screwColor : ScrewColor.Gray;
 

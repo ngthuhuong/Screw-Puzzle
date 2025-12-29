@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
@@ -33,6 +34,20 @@ public class CubeController : MonoBehaviour
 
     }
 
+    private void OnMouseDown() //for hammer tool
+    {
+        if(ToolModeManager.Instance.IsHammerMode())
+        {
+            foreach (var screw in activeScrews.ToArray())
+            {
+                if (screw != null)
+                    screw.ForceRelease();
+            }
+            ToolModeManager.Instance.ExitToolMode();
+        }
+        
+    }
+
     public void ScrewRemoved(ScrewController removedScrew)
     {
         if (activeScrews.Contains(removedScrew))
@@ -61,7 +76,6 @@ public class CubeController : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        // Kiểm tra nhấn giữ chuột phải
         if (Input.GetMouseButton(1)) // Chuột phải
         {
             if (!isFading)

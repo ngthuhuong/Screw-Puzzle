@@ -5,6 +5,7 @@ using UnityEngine;
 public class RewardManager : MMSingleton<RewardManager>
 {
     private List<RewardData> rewards = new List<RewardData>();
+    
     [Header("Reward Prefabs")]
     [SerializeField] private GameObject coinPrefab;
     [SerializeField] private GameObject lifePrefab;
@@ -28,6 +29,7 @@ public class RewardManager : MMSingleton<RewardManager>
 
         var lv2 = new RewardData(RewardSource.LevelComplete, 2);
         lv2.AddReward(RewardType.Coin, 10);
+        lv2.AddReward(RewardType.Drill, 1);
         rewards.Add(lv2);
 
         var lv3 = new RewardData(RewardSource.LevelComplete, 3);
@@ -63,7 +65,7 @@ public class RewardManager : MMSingleton<RewardManager>
 
         return result;
     }
-    private GameObject GetRewardPrefab(RewardType type)
+    public GameObject GetRewardPrefab(RewardType type)
     {
         return type switch
         {
@@ -105,7 +107,8 @@ public class RewardManager : MMSingleton<RewardManager>
                 var view = go.GetComponent<RewardItemView>();
                 if (view != null)
                 {
-                    view.Setup(amount);
+                    view.SetupInToolPannel(type, amount);
+                    Debug.Log("Loaded reward: " + type + " x" + amount);
                 }
             }
 
@@ -135,4 +138,54 @@ public class RewardManager : MMSingleton<RewardManager>
         return total;
     }
 
+
+    #region Use Tools
+
+    public void UseTool(RewardType type)
+    {
+        DataManager.Instance.PlayerData.UseToolATime(type);
+        switch (type)
+        {
+            case RewardType.Drill:
+                UseDrill();
+                break;
+            case RewardType.Broom:
+                UseBroom();
+                break;
+            case RewardType.Hammer:
+                UseHammer();
+                break;
+            case RewardType.Magnet:
+                UseMagnet();
+                break;
+            default:
+                Debug.LogError($"Unknown reward type {type}");
+                break;
+            
+        }
+        
+    }
+
+    private void UseDrill()
+    {
+        Debug.Log("Drill used!");
+        MMEventManager.TriggerEvent(new UseDrillTool());
+    }
+    
+    private void UseHammer()
+    {
+        Debug.Log("UseHammer used!");
+        MMEventManager.TriggerEvent(new UseHammerTool());
+    }
+    private void UseMagnet()
+    {
+        Debug.Log("Manet used!");
+    }
+    private void UseBroom()
+    {
+        Debug.Log("Broom used!");
+        MMEventManager.TriggerEvent(new UseBroomTool());
+    }
+
+    #endregion
 }
