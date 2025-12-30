@@ -107,7 +107,7 @@ public class RewardManager : MMSingleton<RewardManager>
                 var view = go.GetComponent<RewardItemView>();
                 if (view != null)
                 {
-                    view.SetupInToolPannel(type, amount);
+                    view.SetupAsReward(type, amount);
                     Debug.Log("Loaded reward: " + type + " x" + amount);
                 }
             }

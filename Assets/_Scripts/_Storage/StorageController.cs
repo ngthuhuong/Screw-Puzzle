@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Tools;
 
-public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MMEventListener<BoxFull>,MMEventListener<LevelSolutionReadyEvent>,MMEventListener<UseDrillTool>,MMEventListener<StartGame>
+public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MMEventListener<BoxFull>,MMEventListener<LevelSolutionReadyEvent>,MMEventListener<UseDrillTool>,MMEventListener<StartGame>,MMEventListener<UseBroomTool>
 {
     [Header("Box Loader")]
     public LoadBoxes boxLoader;
@@ -14,7 +14,7 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
 
     [Header("Backup Holes (dự phòng khi Box đầy)")]
     public List<Transform> backupItems;
-    private int backupCount = 4;
+    private int backupCount = 4; 
 
     #region ON/OF EVENT LISTENERS
     private void OnEnable()
@@ -23,6 +23,7 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
         this.MMEventStartListening<BoxFull>();
         this.MMEventStartListening<LevelSolutionReadyEvent>();
         this.MMEventStartListening<UseDrillTool>();
+        this.MMEventStartListening<UseBroomTool>();
         this.MMEventStartListening<StartGame>();
     } 
     private void OnDisable()
@@ -31,6 +32,7 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
         this.MMEventStopListening<BoxFull>();
         this.MMEventStopListening<LevelSolutionReadyEvent>();
         this.MMEventStopListening<UseDrillTool>();
+        this.MMEventStopListening<UseBroomTool>();
         this.MMEventStopListening<StartGame>();
     }
     
@@ -161,6 +163,21 @@ public void ResetBackupSlots()
     {
         ResetBackupSlots();
     }
+    
+    public void OnMMEvent(UseBroomTool eventType)
+    {
+        foreach (Transform backup in backupItems)
+        {
+            if (backup.childCount == 0) continue;
+            ScrewController screw = backup.GetChild(0).GetComponent<ScrewController>();
+            if (screw == null) continue;
+            screw.IsInterable = false;
+            screw.PlayAnim("isSweeped");
+            Destroy(screw.gameObject, 1f);
+            
+        }
+    }
+
 #endregion
 
 #region Box Full Event
