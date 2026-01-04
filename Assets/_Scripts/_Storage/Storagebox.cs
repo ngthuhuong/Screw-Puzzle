@@ -81,8 +81,9 @@ public class StorageBox : MonoBehaviour
         {
             Debug.LogWarning("[StorageBox] Hết chỗ trống cho vít!");
             return;
-        }
-
+        } 
+        //chiếm slot luôn kẻo mất
+        screw.transform.SetParent(emptySlot, true);
         StartCoroutine(MoveScrewToSlot(screw, emptySlot));
     }
 
@@ -111,23 +112,20 @@ public class StorageBox : MonoBehaviour
 
     private IEnumerator MoveScrewToSlot(ScrewController screw, Transform slot)
     {
-        if (screw == null) yield break;
-
         Vector3 approachPos = slot.position + slot.up * approachDistance;
         yield return MoveSmoothly(screw.transform, approachPos);
 
-        screw.transform.rotation = Quaternion.LookRotation(slot.forward, slot.up); // ✅ canh hướng vít
-        screw.transform.SetParent(slot, true); // gán vào slot sau cùng
-        
-        screw.PlayAnim("isSpin");
+        screw.transform.rotation = Quaternion.LookRotation(slot.forward, slot.up);
+       // screw.transform.SetParent(slot, true);
+
         yield return MoveSmoothly(screw.transform, slot.position);
-        
+
         if (!HasSlot())
         {
-            Debug.Log($"[StorageBox] {name} đã đầy, gửi sự kiện!");
             MMEventManager.TriggerEvent(new BoxFull(this));
         }
     }
+
 
 
     private IEnumerator MoveSmoothly(Transform obj, Vector3 target)
@@ -172,4 +170,19 @@ public class StorageBox : MonoBehaviour
         }
     }
 
+    public int GetSlotCount()
+    {
+        if (!IsActive || screwSlots == null) 
+            return 0;
+
+        int count = 0;
+        foreach (Transform slot in screwSlots)
+        {
+            if (slot.childCount == 0)
+                count++;
+        }
+        return count;
+    }
+
+   
 }

@@ -66,7 +66,7 @@ public class PlayerData
 
         tools.Add(new ToolData
         {
-            type = RewardType.Hammer,
+            type = RewardType.Magnet,
             amount = 2
         });
 

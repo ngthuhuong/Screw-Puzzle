@@ -12,7 +12,8 @@ public class RewardManager : MMSingleton<RewardManager>
     [SerializeField] private GameObject drillPrefab;
     [SerializeField] private GameObject broomPrefab;
     [SerializeField] private GameObject hammerPrefab;
-    [SerializeField] private GameObject magnetPrefab;
+    [SerializeField] private GameObject magnetUI;
+    [SerializeField] private GameObject magnetGO;
 
 
     protected override void Awake()
@@ -74,7 +75,7 @@ public class RewardManager : MMSingleton<RewardManager>
             RewardType.Drill => drillPrefab,
             RewardType.Broom => broomPrefab,
             RewardType.Hammer => hammerPrefab,
-            RewardType.Magnet => magnetPrefab,
+            RewardType.Magnet => magnetUI,
             _ => null
         };
     }
@@ -180,6 +181,8 @@ public class RewardManager : MMSingleton<RewardManager>
     private void UseMagnet()
     {
         Debug.Log("Manet used!");
+        
+        MMEventManager.TriggerEvent(new UseMagnetTool());
     }
     private void UseBroom()
     {

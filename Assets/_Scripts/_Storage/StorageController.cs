@@ -145,38 +145,45 @@ public void ResetBackupSlots()
             if (t.childCount == 0) return false; 
         return true; 
     }
-    public void OnMMEvent(UseDrillTool eventType)
-    {
-        Transform lastHole = backupItems[backupItems.Count - 1];
-
-        Transform newHole = Instantiate(
-            lastHole,
-            lastHole.parent    // giữ chung parent
-        );
-        newHole.localPosition = lastHole.localPosition;
-        float offsetX = 2f;
-        newHole.localPosition += Vector3.right * offsetX;
-        backupItems.Add(newHole);
-    }
+   
 
     public void OnMMEvent(StartGame eventType)
     {
         ResetBackupSlots();
     }
     
-    public void OnMMEvent(UseBroomTool eventType)
+    
+
+#endregion
+
+#region Tools Events
+public void OnMMEvent(UseDrillTool eventType)
+{
+    Transform lastHole = backupItems[backupItems.Count - 1];
+
+    Transform newHole = Instantiate(
+        lastHole,
+        lastHole.parent    // giữ chung parent
+    );
+    newHole.localPosition = lastHole.localPosition;
+    float offsetX = 2f;
+    newHole.localPosition += Vector3.right * offsetX;
+    backupItems.Add(newHole);
+}
+
+public void OnMMEvent(UseBroomTool eventType)
+{
+    foreach (Transform backup in backupItems)
     {
-        foreach (Transform backup in backupItems)
-        {
-            if (backup.childCount == 0) continue;
-            ScrewController screw = backup.GetChild(0).GetComponent<ScrewController>();
-            if (screw == null) continue;
-            screw.IsInterable = false;
-            screw.PlayAnim("isSweeped");
-            Destroy(screw.gameObject, 1f);
+        if (backup.childCount == 0) continue;
+        ScrewController screw = backup.GetChild(0).GetComponent<ScrewController>();
+        if (screw == null) continue;
+        screw.IsInterable = false;
+        screw.PlayAnim("isSweeped");
+        Destroy(screw.gameObject, 1f);
             
-        }
     }
+}
 
 #endregion
 

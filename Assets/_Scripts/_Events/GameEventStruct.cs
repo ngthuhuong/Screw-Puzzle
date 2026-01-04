@@ -55,3 +55,4 @@ public struct UseDrillTool{}
 
 public struct UseHammerTool{}
 public struct UseBroomTool{}
+public struct UseMagnetTool{}

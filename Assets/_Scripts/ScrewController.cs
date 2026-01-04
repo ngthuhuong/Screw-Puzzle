@@ -17,6 +17,9 @@ public class ScrewController : MonoBehaviour
     private BoxCollider boxCollider;
     private bool isInterable = true;
     public bool IsInterable { get => isInterable; set => isInterable = value; }
+    private bool isMoving = false;
+    public bool IsMoving => isMoving;
+
     void Start()
     {
         screwSetup = GetComponentInChildren<ScrewSetup>();
@@ -58,13 +61,15 @@ public class ScrewController : MonoBehaviour
 
     private IEnumerator AttemptMove()
     {
+        if (isMoving) yield break;
+        isMoving = true;
+
         if (boxCollider == null) yield break;
 
         Vector3 currentPosition = transform.position;
         Vector3 extractionWorldDirection = screwModelTransform.up;
         Vector3 targetWorldPosition = currentPosition + extractionWorldDirection * moveDistance;
 
-        // overlap check
         boxCollider.enabled = false;
         Collider[] overlaps = Physics.OverlapBox(
             transform.TransformPoint(boxCollider.center),
@@ -76,15 +81,16 @@ public class ScrewController : MonoBehaviour
 
         if (overlaps.Any(c => c.transform != transform.parent))
         {
+            isMoving = false;
             yield break;
         }
 
-        MoveForward(); // chỉ gọi MoveForward, không xử lý event ở đây
+        MoveForward();
 
-        // Báo cube
         if (cube != null)
             cube.ScrewRemoved(this);
     }
+
 
     // 🟢 Gọi từ AttemptMove — đi ra 2f rồi phát event
     public void MoveForward()
@@ -95,13 +101,16 @@ public class ScrewController : MonoBehaviour
     private IEnumerator MoveOutThenRelease()
     {
         Vector3 dir = screwModelTransform.up;
+
+        transform.SetParent(null, true);
+
         yield return MoveSmooth(transform.position + dir * 2f, 10f);
 
-        // 🔔 Sau khi ra ngoài mới trigger event
         MMEventManager.TriggerEvent(new ReleaseScrew(this));
     }
 
-    // 🧩 Di chuyển mượt tái sử dụng
+
+    // Di chuyển mượt tái sử dụng
     private IEnumerator MoveSmooth(Vector3 targetPos, float speed)
     {
         Vector3 start = transform.position;
@@ -122,14 +131,20 @@ public class ScrewController : MonoBehaviour
     }
     public void ForceRelease()
     {
-        if (!isInterable) return;
+        if (!isInterable || isMoving) return;
+
         isInterable = false;
+        isMoving = true;
+
         if (boxCollider != null)
             boxCollider.enabled = false;
+
         MoveForward();
+
         if (cube != null)
             cube.ScrewRemoved(this);
     }
+
 
 
     public ScrewColor GetColor() => screwSetup != null ? screwSetup.screwColor : ScrewColor.Gray;
@@ -145,29 +160,7 @@ public class ScrewController : MonoBehaviour
         while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
             yield return null;
     }
-
-    public IEnumerator MoveTo(Vector3 targetPos, Transform newParent, float moveDuration = 1.5f)
-    {
-        if (this == null || gameObject == null)
-            yield break;
-
-        Vector3 startPos = transform.position;
-        float elapsed = 0f;
-
-        if (newParent != null)
-            transform.SetParent(newParent);
-
-        while (elapsed < moveDuration)
-        {
-            if (this == null || gameObject == null) yield break;
-            transform.position = Vector3.Lerp(startPos, targetPos, elapsed / moveDuration);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        if (this != null)
-            transform.position = targetPos;
-    }
+    
     public void PlayAnim(string trigger)
     {
             animator?.SetTrigger(trigger);
