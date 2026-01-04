@@ -181,7 +181,7 @@ public class RewardManager : MMSingleton<RewardManager>
     private void UseMagnet()
     {
         Debug.Log("Manet used!");
-        
+        magnetGO.SetActive(true);
         MMEventManager.TriggerEvent(new UseMagnetTool());
     }
     private void UseBroom()
@@ -191,4 +191,6 @@ public class RewardManager : MMSingleton<RewardManager>
     }
 
     #endregion
+    
+    
 }

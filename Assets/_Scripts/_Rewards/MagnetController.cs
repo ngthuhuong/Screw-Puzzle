@@ -23,7 +23,7 @@ public class MagnetController : MonoBehaviour, MMEventListener<UseMagnetTool>
     {
         animator = GetComponent<Animator>();
         screwFinder = FindAnyObjectByType<FindScrewForMagnet>();
-
+        
         if (animator == null)
             Debug.LogError("[MagnetController] Animator is NULL");
 
@@ -49,5 +49,8 @@ public class MagnetController : MonoBehaviour, MMEventListener<UseMagnetTool>
             screw.ForceRelease();
         }
     }
-   
+    public void HideMagnet()
+    {
+        gameObject.SetActive(false);
+    }
 }
