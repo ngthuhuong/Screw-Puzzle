@@ -35,11 +35,15 @@ public class RewardManager : MMSingleton<RewardManager>
 
         var lv3 = new RewardData(RewardSource.LevelComplete, 3);
         lv3.AddReward(RewardType.Coin, 10);
+        lv3.AddReward(RewardType.Hammer, 1);
         rewards.Add(lv3);
+        var lv4 = new RewardData(RewardSource.LevelComplete, 4);
+        lv4.AddReward(RewardType.Coin, 10);
+        rewards.Add(lv4);
 
         var lv5 = new RewardData(RewardSource.LevelComplete, 5);
         lv5.AddReward(RewardType.Coin, 50);
-        lv5.AddReward(RewardType.Drill, 1);
+        lv5.AddReward(RewardType.Magnet, 1);
         rewards.Add(lv5);
 
         // ===== Daily Login =====
@@ -144,7 +148,7 @@ public class RewardManager : MMSingleton<RewardManager>
 
     public void UseTool(RewardType type)
     {
-        DataManager.Instance.PlayerData.UseToolATime(type);
+       
         switch (type)
         {
             case RewardType.Drill:

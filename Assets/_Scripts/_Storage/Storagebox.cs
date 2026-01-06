@@ -8,6 +8,8 @@ public class StorageBox : MonoBehaviour
 {
     public ScrewColor acceptedColor;
     public List<Transform> screwSlots;
+    private HashSet<Transform> reservedSlots = new HashSet<Transform>();
+
     
     private float approachDistance = 2f;
     private float moveSpeed = 3f;
@@ -76,16 +78,16 @@ public class StorageBox : MonoBehaviour
 
     public void MoveTo(ScrewController screw)
     {
-        Transform emptySlot = GetAvailableSlot();
-        if (emptySlot == null)
+        Transform slot = GetAvailableSlot();
+        if (slot == null)
         {
-            Debug.LogWarning("[StorageBox] Hết chỗ trống cho vít!");
+            Debug.LogWarning("[StorageBox] Hết slot!");
             return;
-        } 
-        //chiếm slot luôn kẻo mất
-        screw.transform.SetParent(emptySlot, true);
-        StartCoroutine(MoveScrewToSlot(screw, emptySlot));
+        }
+        reservedSlots.Add(slot);
+        StartCoroutine(MoveScrewToSlot(screw, slot));
     }
+
 
     public void MoveToFromHole(ScrewController screw, Transform targetSlot)
     {
@@ -93,14 +95,16 @@ public class StorageBox : MonoBehaviour
         StartCoroutine(MoveScrewToSlot(screw, targetSlot));
     }
 
-    
-
     private Transform GetAvailableSlot()
     {
         foreach (Transform t in screwSlots)
-            if (t.childCount == 0) return t;
+        {
+            if (!reservedSlots.Contains(t) && t.childCount == 0)
+                return t;
+        }
         return null;
     }
+
     public List<Transform> GetAllFreeSlots()
     {
         List<Transform> list = new List<Transform>();
@@ -114,12 +118,10 @@ public class StorageBox : MonoBehaviour
     {
         Vector3 approachPos = slot.position + slot.up * approachDistance;
         yield return MoveSmoothly(screw.transform, approachPos);
-
         screw.transform.rotation = Quaternion.LookRotation(slot.forward, slot.up);
-       // screw.transform.SetParent(slot, true);
-
         yield return MoveSmoothly(screw.transform, slot.position);
-
+        screw.transform.SetParent(slot, true);
+        AudioManager.Instance.PlaySFX(SoundId.ScrewRelease);
         if (!HasSlot())
         {
             MMEventManager.TriggerEvent(new BoxFull(this));
@@ -144,7 +146,7 @@ public class StorageBox : MonoBehaviour
         Vector3 start = transform.position;
         Vector3 target = start + Vector3.up * moveUpDistance;
         float t = 0f;
-
+        AudioManager.Instance.PlaySFX(SoundId.BoxFull);
         while (t < 1f)
         {
             t += Time.deltaTime * transitionSpeed;
@@ -183,6 +185,10 @@ public class StorageBox : MonoBehaviour
         }
         return count;
     }
-
-   
+    
+  
+    public void ClearReservedSlots()
+    {
+        reservedSlots.Clear();
+    }
 }

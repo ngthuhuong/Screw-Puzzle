@@ -15,6 +15,9 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
     [Header("Backup Holes (dự phòng khi Box đầy)")]
     public List<Transform> backupItems;
     private int backupCount = 4; 
+    
+    [Header("----Tool----")]
+    public DrillController drillController;
 
     #region ON/OF EVENT LISTENERS
     private void OnEnable()
@@ -150,6 +153,8 @@ public void ResetBackupSlots()
     public void OnMMEvent(StartGame eventType)
     {
         ResetBackupSlots();
+        box1.ClearReservedSlots();
+        box2.ClearReservedSlots();
     }
     
     
@@ -160,13 +165,13 @@ public void ResetBackupSlots()
 public void OnMMEvent(UseDrillTool eventType)
 {
     Transform lastHole = backupItems[backupItems.Count - 1];
-
+    float offsetX = 2f;
+    drillController.InitializeDrill(offsetX);
     Transform newHole = Instantiate(
         lastHole,
         lastHole.parent    // giữ chung parent
     );
     newHole.localPosition = lastHole.localPosition;
-    float offsetX = 2f;
     newHole.localPosition += Vector3.right * offsetX;
     backupItems.Add(newHole);
 }
@@ -191,6 +196,7 @@ public void OnMMEvent(UseBroomTool eventType)
 
     public void OnMMEvent(BoxFull e)
     {
+        e.box.ClearReservedSlots();
         StartCoroutine(HandleReplaceBox(e.box));
     }
 
@@ -272,7 +278,7 @@ public void OnMMEvent(UseBroomTool eventType)
 
         box.ClearData();
         box.MoveDownToOrigin();
-        box.SetInactive(); // inactive logic, KHÔNG disable GameObject
+        box.SetInactive(); // inactive , KHÔNG disable GameObject
     }
 
     #endregion

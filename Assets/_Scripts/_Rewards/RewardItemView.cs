@@ -21,14 +21,8 @@ public class RewardItemView : MonoBehaviour
             Debug.LogError("amountText chưa được gán", this);
             return;
         }
-        if (button == null)
-        {
-            Debug.LogError("button chưa được gán", this);
-            return;
-        }
+    
         amountText.text = amount.ToString();
-        button.onClick.RemoveAllListeners();
-         
     }
     public void SetupInToolPannel(RewardType rewardType, int amount)
     {
@@ -59,6 +53,7 @@ public class RewardItemView : MonoBehaviour
     private void OnClick()
     {
         RewardManager.Instance.UseTool(type);
+        DataManager.Instance.PlayerData.UseToolATime(type);
     }
     
 }

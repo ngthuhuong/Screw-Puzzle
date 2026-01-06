@@ -45,6 +45,7 @@ public class AlertUIController : MonoBehaviour
 
     public void Show(string message, float duration = 2f)
     {
+        if(textMesh == null) textMesh = GetComponentInChildren<TextMeshProUGUI>();
         textMesh.text = message;
 
         timeLeft = duration;

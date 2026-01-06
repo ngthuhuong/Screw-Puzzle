@@ -41,6 +41,8 @@ public class ToolsController : MonoBehaviour,MMEventListener<DataChange>
 
         foreach (var tool in tools)
         {
+            if (tool.amount <= 0)
+                continue;
             var prefab = RewardManager.Instance.GetRewardPrefab(tool.type);
             if (prefab == null) continue;
 

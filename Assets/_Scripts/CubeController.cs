@@ -38,6 +38,7 @@ public class CubeController : MonoBehaviour
     {
         if(ToolModeManager.Instance.IsHammerMode())
         {
+            AudioManager.Instance.PlaySFX(SoundId.Hammer);
             foreach (var screw in activeScrews.ToArray())
             {
                 if (screw != null)

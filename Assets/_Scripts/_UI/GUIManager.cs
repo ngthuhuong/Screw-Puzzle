@@ -85,6 +85,7 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
     public void OnMMEvent(LoseGame eventType)
     {
         popupUI.EnableLoseGroup(true);
+        AudioManager.Instance.PlayBGM(SoundId.Lose);
     }
 
     public void OnMMEvent(Confirm eventType)
@@ -95,6 +96,7 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
                 if (eventType.isYes)
                 {
                     ShowMainMenu();
+                    GameManager.Instance.ReturnToMenu();
                 }
                 else
                 {
@@ -126,6 +128,7 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
 
     public void OnMMEvent(WinGameEvent eventType)
     {
+        AudioManager.Instance.PlayBGM(SoundId.LevelClear);
         popupUI.EnableWinGroup(true);
     }
 

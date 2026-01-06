@@ -1,0 +1,93 @@
+{
+  "levelId": 6,
+  "grid": {
+    "layers": [
+      {
+        "rows": [
+          {
+            "columns": [
+              {
+                "screws": [
+                  { "direction": 1, "color": 1 },
+                  { "direction": 3, "color": 2 },
+                  { "direction": 5, "color": 3 }
+                ]
+              },
+              {
+                "screws": [
+                  { "direction": 2, "color": 4 }
+                ]
+              },
+              {
+                "screws": [
+                  { "direction": 4, "color": 1 }
+                ]
+              },
+              {
+                "screws": [
+                  { "direction": 3, "color": 2 }
+                ]
+              }
+            ]
+          },
+          {
+            "columns": [
+              {
+                "screws": [
+                  { "direction": 2, "color": 3 }
+                ]
+              },
+              {
+                "screws": [
+                  { "direction": 1, "color": 4 },
+                  { "direction": 4, "color": 4 }
+                ]
+              },
+              {
+                "screws": [
+                  { "direction": 3, "color": 1 }
+                ]
+              },
+              {
+                "screws": [
+                  { "direction": 5, "color": 2 }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "rows": [
+          {
+            "columns": [
+              {
+                "screws": [
+                  { "direction": 4, "color": 3 }
+                ]
+              },
+              {
+                "screws": [
+                  { "direction": 3, "color": 1 }
+                ]
+              },
+              {
+                "screws": [
+                  { "direction": 2, "color": 2 }
+                ]
+              },
+              {
+                "screws": [
+                  { "direction": 1, "color": 4 }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "solution": {
+    "colors": [1, 2, 3, 4, 3, 1, 4, 2, 1, 2, 3, 4]
+  }
+}

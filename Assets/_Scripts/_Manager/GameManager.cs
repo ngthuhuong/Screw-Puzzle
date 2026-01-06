@@ -51,11 +51,13 @@ public class GameManager : MMSingleton<GameManager>
         {
             case GameState.MainMenu:
                 GUIManager.Instance.ShowMainMenu();
+                AudioManager.Instance.PlayBGM(SoundId.BGM);
                 gameplayRoot.SetActive(false);
                 break;
             case GameState.Playing:
                 GUIManager.Instance.ShowInGameUI();
                 LevelManager.Instance.StartLevel(DataManager.Instance.PlayerData.CurrentLevelIndex);
+                AudioManager.Instance.PlayBGM(SoundId.PlayingBGM);
                 gameplayRoot.SetActive(true);
                 UnlockInput();
                 DataManager.Instance.PlayerData.LoseLife();

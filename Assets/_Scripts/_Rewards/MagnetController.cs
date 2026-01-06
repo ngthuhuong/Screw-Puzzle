@@ -53,4 +53,8 @@ public class MagnetController : MonoBehaviour, MMEventListener<UseMagnetTool>
     {
         gameObject.SetActive(false);
     }
+    public void PlayMagnetSfx()
+    {
+        AudioManager.Instance.PlaySFX(SoundId.Magnet);
+    }
 }

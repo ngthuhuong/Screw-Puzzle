@@ -26,9 +26,4 @@ public class LoadBoxes : MonoBehaviour
         return boxColors[currentColorIndex++];
     }
 
-    public void ResetIndex()
-    {
-        currentColorIndex = 0;
-    }
-
 }

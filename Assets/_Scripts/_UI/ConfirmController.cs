@@ -13,8 +13,8 @@ public class ConfirmController : MonoBehaviour
 
     public void Show(string message, string tag)
     {
+        AudioManager.Instance.PlaySFX(SoundId.Noti);
         gameObject.SetActive(true);
-
         currentTag = tag;
         messageText.text = message;
 
@@ -23,12 +23,14 @@ public class ConfirmController : MonoBehaviour
 
         yesButton.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayClickButton();
             MMEventManager.TriggerEvent(new Confirm(currentTag, true));
             Hide();
         });
 
         noButton.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayClickButton();
             MMEventManager.TriggerEvent(new Confirm(currentTag, false));
             Hide();
         });

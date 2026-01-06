@@ -19,6 +19,9 @@ public class ScrewController : MonoBehaviour
     public bool IsInterable { get => isInterable; set => isInterable = value; }
     private bool isMoving = false;
     public bool IsMoving => isMoving;
+    private bool isRemoved = false;
+    public bool IsRemoved => isRemoved;
+
 
     void Start()
     {
@@ -48,10 +51,13 @@ public class ScrewController : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (GameManager.Instance.InputLocked || !IsInterable) return;
+        if (IsRemoved || isMoving || !IsInterable) return;
+
         animator?.SetTrigger("isClicked");
+        AudioManager.Instance.PlaySFX(SoundId.ScrewClick);
         StartCoroutine(PlayBounceThenMove());
     }
+
 
     private IEnumerator PlayBounceThenMove()
     {
@@ -105,7 +111,7 @@ public class ScrewController : MonoBehaviour
         transform.SetParent(null, true);
 
         yield return MoveSmooth(transform.position + dir * 2f, 10f);
-
+        isRemoved = true;
         MMEventManager.TriggerEvent(new ReleaseScrew(this));
     }
 
@@ -131,7 +137,7 @@ public class ScrewController : MonoBehaviour
     }
     public void ForceRelease()
     {
-        if (!isInterable || isMoving) return;
+        if (isRemoved || isMoving) return;
 
         isInterable = false;
         isMoving = true;

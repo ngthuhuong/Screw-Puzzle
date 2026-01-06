@@ -26,4 +26,8 @@ public class BroomController : MonoBehaviour,MMEventListener<UseBroomTool>
     {
         animator.Play("BroomSweep");
     }
+    public void PlayBroomSfx()
+    {
+        AudioManager.Instance.PlaySFX(SoundId.Broom);
+    }
 }

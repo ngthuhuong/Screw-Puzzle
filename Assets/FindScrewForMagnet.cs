@@ -19,6 +19,7 @@ public class FindScrewForMagnet : MonoBehaviour
         foreach (var screw in allScrews)
         {
             if(count >= num) break;
+            if (screw.IsRemoved) continue;
             if (screw.GetColor() != color) continue;
             list.Add(screw);
             count++;
