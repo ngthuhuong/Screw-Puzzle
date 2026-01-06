@@ -8,7 +8,7 @@ public class LoadBoxes : MonoBehaviour
 
     public void SetSolution(List<ScrewColor> solution)
     {
-        boxColors = solution;
+        boxColors = new List<ScrewColor>(solution);
         currentColorIndex = 0;
         Debug.Log("[LoadBoxes] Solution set with " + boxColors.Count + " colors.");
     }
@@ -25,5 +25,11 @@ public class LoadBoxes : MonoBehaviour
 
         return boxColors[currentColorIndex++];
     }
+    public void ResetLoader()
+    {
+        boxColors = null;
+        currentColorIndex = 0;
+    }
+
 
 }

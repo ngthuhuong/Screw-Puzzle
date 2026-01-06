@@ -34,21 +34,29 @@ public class AudioManager : MMSingleton<AudioManager>
     
         public void PlayBGM(SoundId id, float volume = 1f)
         {
-            
-            bgmSource.clip = soundMap[id].clip;
+            if (!soundMap.TryGetValue(id, out var sound)) return;
+
+            // Avoid restarting same BGM
+            if (bgmSource.clip == sound.clip && bgmSource.isPlaying)
+                return;
+
+            bgmSource.clip = sound.clip;
             bgmSource.volume = volume;
+            bgmSource.loop = true;
             bgmSource.Play();
         }
-    
-        public void StopBGM()
+        public void MuteBGM(bool mute)
         {
-            bgmSource.Stop();
+            if (bgmSource == null) return;
+            bgmSource.mute = mute;
         }
 
-        public void StopSFX()
+        public void MuteSFX(bool mute)
         {
-            sfxSource.Stop();
+            if (sfxSource == null) return;
+            sfxSource.mute = mute;
         }
+
         public void PlayClickButton()
         {
             PlaySFX(SoundId.ButtonClick);

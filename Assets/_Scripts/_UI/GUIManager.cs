@@ -128,7 +128,7 @@ public class GUIManager : MMSingleton<GUIManager>,MMEventListener<LoseGame>,MMEv
 
     public void OnMMEvent(WinGameEvent eventType)
     {
-        AudioManager.Instance.PlayBGM(SoundId.LevelClear);
+        AudioManager.Instance.PlaySFX(SoundId.LevelClear);
         popupUI.EnableWinGroup(true);
     }
 

@@ -1,7 +1,8 @@
+using MoreMountains.Tools;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ObjectRotateZoom_Mobile : MonoBehaviour
+public class ObjectRotateZoom_Mobile : MonoBehaviour,MMEventListener<StartGame>
 {
     [Header("References")]
     public Transform target;
@@ -15,17 +16,34 @@ public class ObjectRotateZoom_Mobile : MonoBehaviour
     private bool isRotating = false;
     private Camera cam;
     private float currentDistance;
+    private float defaultDistance;
+    private Vector3 defaultDirection;
+    private Vector3 defaultTargetPosition;
 
     public float CurrentDistance => currentDistance;
+    private void OnEnable()
+    {
+        this.MMEventStartListening<StartGame>();
+    }
 
+    private void OnDisable()
+    {
+        this.MMEventStopListening<StartGame>();
+    }
     void Start()
     {
         cam = Camera.main;
-        if (target != null)
+        if (target != null && cam != null)
+        {
             currentDistance = Vector3.Distance(cam.transform.position, target.position);
 
-        // Khởi tạo slider
-        if(zoomSlider != null)
+            // ===== SAVE DEFAULT STATE =====
+            defaultDistance = currentDistance;
+            defaultDirection = (target.position - cam.transform.position).normalized;
+            defaultTargetPosition = target.position;
+        }
+
+        if (zoomSlider != null)
         {
             zoomSlider.minValue = minDistance;
             zoomSlider.maxValue = maxDistance;
@@ -36,6 +54,7 @@ public class ObjectRotateZoom_Mobile : MonoBehaviour
             zoomSlider.onValueChanged.AddListener(OnSliderChanged);
         }
     }
+
 
     void Update()
     {
@@ -139,5 +158,15 @@ public class ObjectRotateZoom_Mobile : MonoBehaviour
             float normalized = (currentDistance - minDistance) / (maxDistance - minDistance);
             zoomSlider.value = Mathf.Lerp(maxDistance, minDistance, normalized);
         }
+    }
+    
+    public void OnMMEvent(StartGame eventType)
+    {
+            if (target == null || cam == null) return;
+
+            currentDistance = Mathf.Clamp(defaultDistance, minDistance, maxDistance);
+            target.position = cam.transform.position + defaultDirection * currentDistance;
+
+            UpdateSlider();
     }
 }

@@ -55,19 +55,18 @@ public class GameManager : MMSingleton<GameManager>
                 gameplayRoot.SetActive(false);
                 break;
             case GameState.Playing:
+                gameplayRoot.SetActive(true);
                 GUIManager.Instance.ShowInGameUI();
                 LevelManager.Instance.StartLevel(DataManager.Instance.PlayerData.CurrentLevelIndex);
                 AudioManager.Instance.PlayBGM(SoundId.PlayingBGM);
-                gameplayRoot.SetActive(true);
+                
                 UnlockInput();
                 DataManager.Instance.PlayerData.LoseLife();
                 MMEventManager.TriggerEvent(new StartGame());
                 break;
-            //con win +lose
-            
+           
         }
         
-
         //tạm dưngf + thua
         Time.timeScale = (newState == GameState.Paused || newState == GameState.GameOver) ? 0 : 1;
 

@@ -14,6 +14,7 @@ public class RewardManager : MMSingleton<RewardManager>
     [SerializeField] private GameObject hammerPrefab;
     [SerializeField] private GameObject magnetUI;
     [SerializeField] private GameObject magnetGO;
+    [SerializeField] private HammerController hammerGO;
 
 
     protected override void Awake()
@@ -30,7 +31,7 @@ public class RewardManager : MMSingleton<RewardManager>
 
         var lv2 = new RewardData(RewardSource.LevelComplete, 2);
         lv2.AddReward(RewardType.Coin, 10);
-        lv2.AddReward(RewardType.Drill, 1);
+        lv2.AddReward(RewardType.Broom, 1);
         rewards.Add(lv2);
 
         var lv3 = new RewardData(RewardSource.LevelComplete, 3);
@@ -39,6 +40,7 @@ public class RewardManager : MMSingleton<RewardManager>
         rewards.Add(lv3);
         var lv4 = new RewardData(RewardSource.LevelComplete, 4);
         lv4.AddReward(RewardType.Coin, 10);
+        lv4.AddReward(RewardType.Drill, 1);
         rewards.Add(lv4);
 
         var lv5 = new RewardData(RewardSource.LevelComplete, 5);
@@ -195,6 +197,10 @@ public class RewardManager : MMSingleton<RewardManager>
     }
 
     #endregion
-    
-    
+
+    public void InitAnimHammer(Vector3 position)
+    {
+        if (hammerGO == null) hammerGO = GetComponent<HammerController>();
+        hammerGO.InitializeHammer(position);
+    }
 }

@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +8,7 @@ public class GUIMenuController : GUIBase
     [SerializeField]
     public Button playButton;
     public Button playerProfileButton;
+    private TextMeshProUGUI levelText;
 
     public TextMeshProUGUI playerCoin;
     public TextMeshProUGUI playerHeart;
@@ -14,9 +16,28 @@ public class GUIMenuController : GUIBase
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        playButton.onClick.AddListener(HandlePlayButton);
+        if (playButton != null)
+        {
+            playButton.onClick.AddListener(HandlePlayButton);
+            levelText = playButton.GetComponentInChildren<TextMeshProUGUI>();
+            levelText.text = "Play Level " + DataManager.Instance.PlayerData.CurrentLevelIndex.ToString();
+        }
+        else
+        {
+            Debug.LogError("Play button null");
+        }
+        
         playerCoin.text = DataManager.Instance.PlayerData.Coin.ToString();
         playerHeart.text = DataManager.Instance.PlayerData.Lives.ToString();
+    }
+
+    private void OnEnable()
+    {
+        if (levelText == null)
+        {
+            levelText = playButton.GetComponentInChildren<TextMeshProUGUI>();
+        }
+        levelText.text = "Play Level " + DataManager.Instance.PlayerData.CurrentLevelIndex.ToString();
     }
 
 
@@ -30,8 +51,7 @@ public class GUIMenuController : GUIBase
             return;
         }
 
-        GameManager.Instance.ResumeGame();
-        
+        GameManager.Instance.StartGame();
     }
     public void UpdatePlayerResources()
     {

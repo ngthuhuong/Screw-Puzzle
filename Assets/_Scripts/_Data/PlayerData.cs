@@ -61,19 +61,19 @@ public class PlayerData
         tools.Add(new ToolData
         {
             type = RewardType.Drill,
-            amount = 3
+            amount = 1
         });
 
         tools.Add(new ToolData
         {
-            type = RewardType.Magnet,
+            type = RewardType.Hammer,
             amount = 2
         });
 
         tools.Add(new ToolData
         {
-            type = RewardType.Broom,
-            amount = 5
+            type = RewardType.Magnet,
+            amount = 1
         });
         
         Save();

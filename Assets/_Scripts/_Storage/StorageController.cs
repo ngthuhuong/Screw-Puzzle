@@ -4,7 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Tools;
 
-public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MMEventListener<BoxFull>,MMEventListener<LevelSolutionReadyEvent>,MMEventListener<UseDrillTool>,MMEventListener<StartGame>,MMEventListener<UseBroomTool>
+public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MMEventListener<BoxFull>,MMEventListener<LevelSolutionReadyEvent>,MMEventListener<UseDrillTool>,MMEventListener<UseBroomTool>
+    
 {
     [Header("Box Loader")]
     public LoadBoxes boxLoader;
@@ -27,7 +28,6 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
         this.MMEventStartListening<LevelSolutionReadyEvent>();
         this.MMEventStartListening<UseDrillTool>();
         this.MMEventStartListening<UseBroomTool>();
-        this.MMEventStartListening<StartGame>();
     } 
     private void OnDisable()
     {
@@ -36,7 +36,6 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
         this.MMEventStopListening<LevelSolutionReadyEvent>();
         this.MMEventStopListening<UseDrillTool>();
         this.MMEventStopListening<UseBroomTool>();
-        this.MMEventStopListening<StartGame>();
     }
     
     #endregion
@@ -75,7 +74,14 @@ public class StorageController : MonoBehaviour, MMEventListener<ReleaseScrew>,MM
             Debug.LogError("[StorageController] boxLoader null");
             return;
         }
+        StopAllCoroutines(); 
         ResetStorage();
+
+        box1.ClearReservedSlots();
+        box2.ClearReservedSlots();
+
+        ResetBackupSlots();
+        boxLoader.ResetLoader();
         boxLoader.SetSolution(e.solutionColors);
 
         InitializeBoxes();
@@ -150,12 +156,18 @@ public void ResetBackupSlots()
     }
    
 
-    public void OnMMEvent(StartGame eventType)
+   /** public void OnMMEvent(StartGame eventType)
     {
-        ResetBackupSlots();
+        // Reset box + backup
+        ResetStorage();
+
+        // Reset reserved slot logic
         box1.ClearReservedSlots();
         box2.ClearReservedSlots();
-    }
+
+        // Reset backup slots count
+        ResetBackupSlots();
+    }**/
     
     
 
@@ -267,6 +279,9 @@ public void OnMMEvent(UseBroomTool eventType)
         {
             for (int i = backup.childCount - 1; i >= 0; i--)
             {
+                ScrewController sc = backup.GetChild(i).GetComponent<ScrewController>();
+                if (sc != null)
+                    sc.enabled = false; 
                 Destroy(backup.GetChild(i).gameObject);
             }
         }
@@ -274,12 +289,22 @@ public void OnMMEvent(UseBroomTool eventType)
 
     private void ResetBox(StorageBox box)
     {
-        if (box == null) return;
+       // if (box == null) return;
 
+        box.StopAllCoroutines();  
         box.ClearData();
+        box.ClearReservedSlots();
+
+        foreach (Transform slot in box.screwSlots)
+        {
+            if (slot.childCount > 0)
+                Destroy(slot.GetChild(0).gameObject);
+        }
+
         box.MoveDownToOrigin();
-        box.SetInactive(); // inactive , KHÔNG disable GameObject
     }
+
+
 
     #endregion
 

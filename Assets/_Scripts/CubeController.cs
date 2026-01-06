@@ -10,6 +10,7 @@ public class CubeController : MonoBehaviour
     private Rigidbody rb;
     private bool isReleased = false; 
     private bool isFading = false;
+    private Animator animator;
 
     public GameObject cubeModel;
     [Header("screws inside")]
@@ -28,26 +29,37 @@ public class CubeController : MonoBehaviour
         if (rb == null)
             rb = gameObject.AddComponent<Rigidbody>();
         rb.isKinematic = true;
+        animator = GetComponentInChildren<Animator>(); //get first animator in children so put 3d model first pos
 
         ScrewController[] childScrews = GetComponentsInChildren<ScrewController>();
         activeScrews = new List<ScrewController>(childScrews);
 
     }
 
-    private void OnMouseDown() //for hammer tool
+    private void OnMouseDown()
     {
-        if(ToolModeManager.Instance.IsHammerMode())
+        if (!ToolModeManager.Instance.IsHammerMode())
+            return;
+
+        Vector3 clickWorldPos ;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
         {
-            AudioManager.Instance.PlaySFX(SoundId.Hammer);
-            foreach (var screw in activeScrews.ToArray())
-            {
-                if (screw != null)
-                    screw.ForceRelease();
-            }
-            ToolModeManager.Instance.ExitToolMode();
+            clickWorldPos = hit.point;
         }
-        
+        clickWorldPos = transform.position;
+        animator.SetTrigger("Hit"); 
+        RewardManager.Instance.InitAnimHammer(clickWorldPos);
+        foreach (var screw in activeScrews.ToArray())
+        {
+            if (screw != null)
+                screw.ForceRelease();
+        }
+
+        ToolModeManager.Instance.ExitToolMode();
     }
+
 
     public void ScrewRemoved(ScrewController removedScrew)
     {
@@ -181,7 +193,6 @@ public class CubeController : MonoBehaviour
         foreach (var info in screws)
         {
             ScrewSetup setup = GetScrewSetup(info.direction);
-
             if (setup != null)
             {
                 setup.ApplyColor(info.color);
@@ -189,5 +200,7 @@ public class CubeController : MonoBehaviour
             }
         }
     }
+
+
 
 }

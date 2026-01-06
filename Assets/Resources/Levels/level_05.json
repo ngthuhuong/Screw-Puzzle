@@ -72,7 +72,7 @@
               },
               {
                 "screws": [
-                  { "direction": 3, "color": 2 }
+                  { "direction": 3, "color": 1 }
                 ]
               },
               {
@@ -82,7 +82,7 @@
               },
               {
                 "screws": [
-                  { "direction": 1, "color": 3 }
+                  { "direction": 1, "color": 1 }
                 ]
               }
             ]
@@ -92,6 +92,6 @@
     ]
   },
   "solution": {
-    "colors": [1, 1, 2, 3, 4, 2, 3, 4, 1, 2]
+    "colors": [1, 1, 2, 3, 4]
   }
 }

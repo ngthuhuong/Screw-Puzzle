@@ -36,10 +36,11 @@
               {
                 "screws": [
                   { "direction": 2, "color": 2 }
-                ],
+                ]
+              },
+              {
                 "screws": [
-                  { "direction": 6, "color": 4 },
-                  { "direction": 3, "color": 4 }
+                  { "direction": 1, "color": 4 }
                 ]
               },
               {
@@ -56,9 +57,6 @@
               {
                 "screws": [
                   { "direction": 3, "color": 3 }
-                ],
-                "screws": [
-                  { "direction": 1, "color": 1 }
                 ]
               }
             ]
@@ -68,6 +66,6 @@
     ]
   },
   "solution": {
-    "colors": [1, 2, 3, 4, 1, 2]
+    "colors": [1, 2, 3, 4]
   }
 }

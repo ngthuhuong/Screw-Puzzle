@@ -37,7 +37,6 @@ public class MagnetController : MonoBehaviour, MMEventListener<UseMagnetTool>
         animator.Play("Attracting");
         if (targetBox == null || !targetBox.IsActive)
             return;
-
         ScrewColor targetColor = targetBox.acceptedColor;
         int num = targetBox.GetSlotCount();
         List<ScrewController> screws = screwFinder.FindAllModelScrews(targetColor, num);
